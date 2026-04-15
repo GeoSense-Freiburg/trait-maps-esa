@@ -1,0 +1,17 @@
+[project]
+name = "esa-trait-publish"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+dependencies = [
+    "pystac",
+    "rasterio",
+    "pandas",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "stac-validator",
+    "rio-cogeo",
+]

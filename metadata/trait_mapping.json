@@ -1,0 +1,197 @@
+{
+    "4": {
+        "short": "SSD",
+        "long": "Stem specific density (SSD) or wood density (stem dry mass per stem fresh volume)",
+        "unit": "g cm⁻³"
+    },
+    "6": {
+        "short": "Rooting depth",
+        "long": "Root rooting depth",
+        "unit": "m"
+    },
+    "11": {
+        "short": "SLA",
+        "long": "Leaf area per leaf dry mass (specific leaf area, SLA or 1/LMA): undefined if petiole is included or excluded)",
+        "unit": "m² kg⁻¹"
+    },
+    "13": {
+        "short": "Leaf C",
+        "long": "Leaf carbon (C) content per leaf dry mass",
+        "unit": "mg g⁻¹"
+    },
+    "14": {
+        "short": "Leaf N (mass)",
+        "long": "Leaf nitrogen (N) content per leaf dry mass",
+        "unit": "mg g⁻¹"
+    },
+    "15": {
+        "short": "Leaf P",
+        "long": "Leaf phosphorus (P) content per leaf dry mass",
+        "unit": "mg g⁻¹"
+    },
+    "18": {
+        "short": "Plant height",
+        "long": "Plant height",
+        "unit": "m"
+    },
+    "21": {
+        "short": "Stem diameter",
+        "long": "Stem diameter",
+        "unit": "m"
+    },
+    "26": {
+        "short": "Seed mass",
+        "long": "Seed dry mass",
+        "unit": "mg"
+    },
+    "27": {
+        "short": "Seed length",
+        "long": "Seed length",
+        "unit": "mm"
+    },
+    "46": {
+        "short": "Leaf thickness",
+        "long": "Leaf thickness",
+        "unit": "mm"
+    },
+    "47": {
+        "short": "LDMC",
+        "long": "Leaf dry mass per leaf fresh mass (leaf dry matter content, LDMC)",
+        "unit": "g g⁻¹"
+    },
+    "50": {
+        "short": "Leaf N (area)",
+        "long": "Leaf nitrogen (N) content per leaf area",
+        "unit": "g m⁻²"
+    },
+    "55": {
+        "short": "Leaf dry mass",
+        "long": "Leaf dry mass (single leaf)",
+        "unit": "g"
+    },
+    "78": {
+        "short": "Leaf delta 15N",
+        "long": "Leaf nitrogen (N) isotope signature (delta 15N)",
+        "unit": "ppm"
+    },
+    "95": {
+        "short": "Seed germination rate",
+        "long": "Seed germination rate (germination efficiency)",
+        "unit": "days"
+    },
+    "138": {
+        "short": "Seed number",
+        "long": "Seed number per reproduction unit",
+        "unit": "-"
+    },
+    "144": {
+        "short": "Leaf length",
+        "long": "Leaf length",
+        "unit": "mm"
+    },
+    "145": {
+        "short": "Leaf width",
+        "long": "Leaf width",
+        "unit": "mm"
+    },
+    "146": {
+        "short": "Leaf C/N ratio",
+        "long": "Leaf carbon/nitrogen (C/N) ratio",
+        "unit": "g g⁻¹"
+    },
+    "163": {
+        "short": "Leaf fresh mass",
+        "long": "Leaf fresh mass",
+        "unit": "g"
+    },
+    "169": {
+        "short": "Stem conduit density",
+        "long": "Stem conduit density (vessels and tracheids)",
+        "unit": "mm⁻²"
+    },
+    "223": {
+        "short": "Chromosome number",
+        "long": "Species genotype: chromosome number",
+        "unit": "-"
+    },
+    "224": {
+        "short": "Chromosome cDNA content",
+        "long": "Species genotype: chromosome cDNA content",
+        "unit": "Gb"
+    },
+    "237": {
+        "short": "Dispersal unit length",
+        "long": "Dispersal unit length",
+        "unit": "mm"
+    },
+    "281": {
+        "short": "Stem conduit diameter",
+        "long": "Stem conduit diameter (vessels, tracheids)",
+        "unit": "μm"
+    },
+    "282": {
+        "short": "Conduit element length",
+        "long": "Wood vessel element length; stem conduit (vessel and tracheids) element length",
+        "unit": "μm"
+    },
+    "289": {
+        "short": "Wood fiber lengths",
+        "long": "Wood fiber lengths",
+        "unit": "μm"
+    },
+    "297": {
+        "short": "Wood ray density",
+        "long": "Wood rays per millimetre (wood ray density)",
+        "unit": "mm⁻¹"
+    },
+    "351": {
+        "short": "Seed number (disp.)",
+        "long": "Seed number per dispersal unit",
+        "unit": "-"
+    },
+    "614": {
+        "short": "SRL (fine)",
+        "long": "Fine root length per fine root dry mass (specific fine root length, SRL)",
+        "unit": "cm g⁻¹"
+    },
+    "1080": {
+        "short": "SRL",
+        "long": "Root length per root dry mass (specific root length, SRL)",
+        "unit": "cm g⁻¹"
+    },
+    "3106": {
+        "short": "Plant height",
+        "long": "Plant height vegetative",
+        "unit": "m"
+    },
+    "3107": {
+        "short": "Plant height (gen.)",
+        "long": "Plant height generative",
+        "unit": "m"
+    },
+    "3112": {
+        "short": "Leaf area (3112)",
+        "long": "Leaf area (in case of compound leaves: leaf, undefined if petiole in- or excluded)",
+        "unit": "mm²"
+    },
+    "3113": {
+        "short": "Leaf area",
+        "long": "Leaf area (in case of compound leaves: leaflet, undefined if petiole is in- or excluded)",
+        "unit": "mm²"
+    },
+    "3114": {
+        "short": "Leaf area (3114)",
+        "long": "Leaf area (in case of compound leaves: undefined if leaf or leaflet, undefined if petiole is in- or excluded)",
+        "unit": "mm²"
+    },
+    "3117": {
+        "short": "SLA",
+        "long": "Leaf area per leaf dry mass (specific leaf area, SLA or 1/LMA): undefined if petiole is in- or excluded)",
+        "unit": "m² kg⁻¹"
+    },
+    "3120": {
+        "short": "Leaf water content",
+        "long": "Leaf water content per leaf dry mass (not saturated)",
+        "unit": "g g⁻¹"
+    }
+}
