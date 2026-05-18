@@ -163,8 +163,18 @@ def create_item_from_raster(
         href = build_asset_href(raster_path, base=base_asset_href)
 
     media_type = COG_MEDIA_TYPE
-    asset = pystac.Asset(href=href, media_type=media_type, roles=["data"])
+    # Build a human-readable asset title from trait/stat where possible
+    try:
+        asset_title = build_item_title_short(record.get("trait_long_name"), record.get("stat_name")) + " Raster"
+    except Exception:
+        asset_title = "Raster"
+
+    asset = pystac.Asset(href=href, media_type=media_type, roles=["data"], title=asset_title)
     item.add_asset("data", asset)
+
+    # Defensive check: ensure the asset was added
+    if "data" not in (item.assets or {}):
+        raise RuntimeError(f"Item {item_id} missing required 'data' asset (href={href})")
 
     # store projected/native spatial metadata in properties using extension-
     # friendly keys so we don't expose projected coordinates in STAC core.
@@ -332,6 +342,19 @@ def build_item_description(trait_long_name: Optional[str], stat_name: Optional[s
     )
     # Capitalize first letter only for readability in properties
     return description[0].upper() + description[1:]
+
+
+def build_item_title_short(trait_long_name: Optional[str], stat_name: Optional[str]) -> str:
+    """Build a short human-readable title used for asset titles.
+
+    Example: "Leaf Length Mean"
+    """
+    trait = (trait_long_name or "Trait").strip()
+    stat_label = _format_stat_label(stat_name)
+    pieces = [trait]
+    if stat_label:
+        pieces.append(stat_label)
+    return " ".join(pieces).title()
 
 
 def apply_osc_collection_fields(collection: pystac.Collection) -> pystac.Collection:
