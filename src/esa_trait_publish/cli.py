@@ -58,10 +58,10 @@ def main(argv: Optional[list[str]] = None) -> None:
 	output_dir = Path(args.output_dir)
 
 	collection = build_collection_from_directory(maps_dir, trait_metadata, stat_metadata)
-	save_collection(collection, output_dir)
+	written = save_collection(collection, output_dir)
 
 	print(f"Saved collection to: {output_dir}")
-	print(f"Items in collection: {len(list(collection.get_items()))}")
+	print(f"Items written: {written}")
 
 
 if __name__ == "__main__":
