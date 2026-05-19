@@ -12,6 +12,7 @@ import datetime
 
 import pystac
 import json as _json
+import logging
 
 from .config import (
     get_collection_config,
@@ -483,9 +484,54 @@ def build_collection_from_directory(
 
     # discover raster files
     files: List[Path] = []
-    files.extend(sorted(maps_dir.glob("*.tif")))
-    files.extend(sorted(maps_dir.glob("*.tiff")))
-    files = sorted(set(files), key=lambda p: p.name)
+    logger = logging.getLogger(__name__)
+
+    def is_valid_raster_file(path: Path) -> bool:
+        """Return True for real raster files we should process.
+
+        Rules:
+        - only accept names that end exactly with .tif or .tiff (case-insensitive)
+        - reject files beginning with '._' (resource forks) or '.' (hidden)
+        - require the path to be a regular file
+        """
+        name = path.name
+        # Exclude resource-fork and hidden files
+        if name.startswith("._"):
+            return False
+        if name.startswith("."):
+            return False
+
+        # Must be a regular file
+        if not path.is_file():
+            return False
+
+        nl = name.lower()
+        # Only accept exact raster filename endings
+        if nl.endswith(".tif") or nl.endswith(".tiff"):
+            return True
+        return False
+
+    # Iterate directory entries and filter strictly for valid raster files.
+    skipped = []
+    try:
+        for p in maps_dir.iterdir():
+            try:
+                if is_valid_raster_file(p):
+                    files.append(p)
+                else:
+                    # Debug log skipped files; do not treat as an error.
+                    logger.debug("Skipping non-raster or sidecar file: %s", p.name)
+                    skipped.append(p.name)
+            except Exception:
+                # Be defensive: skip problematic entries but log at debug level
+                logger.debug("Error inspecting file %s; skipping", str(p), exc_info=True)
+                skipped.append(str(p))
+    except Exception:
+        # If the directory cannot be read, propagate the error so callers see it
+        raise
+
+    # Sort deterministically by filename (case-insensitive)
+    files = sorted(files, key=lambda p: p.name.lower())
 
     for f in files:
         # be explicit about errors when reading individual rasters
