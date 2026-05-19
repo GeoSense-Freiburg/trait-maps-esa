@@ -44,6 +44,9 @@ PROJECTION_EXTENSION: str = "https://stac-extensions.github.io/projection/v2.0.0
 # Scientific extension URL
 SCIENTIFIC_EXTENSION: str = "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
 
+# Raster extension URL
+RASTER_EXTENSION: str = "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
+
 # OSC defaults required by the user
 OSC_TYPE: str = "product"
 OSC_STATUS: str = "completed"

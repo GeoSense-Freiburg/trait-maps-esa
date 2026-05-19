@@ -108,6 +108,79 @@ def extract_raster_metadata(path: Path) -> Dict[str, Any]:
                 metadata["bbox"] = None
                 metadata["geometry"] = None
 
+            # dataset-level additional fields
+            try:
+                prof = src.profile or {}
+                metadata["driver"] = src.driver
+                metadata["dtypes"] = list(src.dtypes)
+                metadata["compression"] = prof.get("compress") or prof.get("compression")
+                metadata["tiled"] = bool(prof.get("tiled", False))
+                metadata["block_shapes"] = getattr(src, "block_shapes", None)
+                # overviews per band
+                overviews = {}
+                for i in range(1, src.count + 1):
+                    try:
+                        overviews[i] = src.overviews(i)
+                    except Exception:
+                        overviews[i] = []
+                metadata["overviews"] = overviews
+                # color interp and mask flags
+                try:
+                    metadata["colorinterp"] = [ci.name for ci in src.colorinterp]
+                except Exception:
+                    metadata["colorinterp"] = None
+                try:
+                    metadata["mask_flag_enums"] = [mf.name for mf in src.mask_flag_enums] if getattr(src, "mask_flag_enums", None) else None
+                except Exception:
+                    metadata["mask_flag_enums"] = None
+
+                # tags
+                try:
+                    metadata["tags"] = src.tags() or {}
+                except Exception:
+                    metadata["tags"] = {}
+                try:
+                    metadata["image_structure_tags"] = src.tags(ns="IMAGE_STRUCTURE") or {}
+                except Exception:
+                    metadata["image_structure_tags"] = {}
+
+                # band-level metadata
+                band_list = []
+                for i in range(1, src.count + 1):
+                    bm: Dict[str, Any] = {}
+                    bm["band_index"] = i
+                    try:
+                        bm["dtype"] = src.dtypes[i - 1]
+                    except Exception:
+                        bm["dtype"] = None
+                    try:
+                        bm["nodata"] = src.nodatavals[i - 1]
+                    except Exception:
+                        bm["nodata"] = None
+                    try:
+                        bm["unit"] = src.units[i - 1] if src.units and len(src.units) >= i else None
+                    except Exception:
+                        bm["unit"] = None
+                    try:
+                        bm["description"] = src.descriptions[i - 1] if src.descriptions and len(src.descriptions) >= i else None
+                    except Exception:
+                        bm["description"] = None
+                    try:
+                        bm["tags"] = src.tags(i) or {}
+                    except Exception:
+                        bm["tags"] = {}
+                    try:
+                        bm["overviews"] = src.overviews(i)
+                    except Exception:
+                        bm["overviews"] = []
+                    # mask flags per band sometimes available; omit if not
+                    bm["mask_flags"] = None
+                    band_list.append(bm)
+                metadata["bands"] = band_list
+            except Exception:
+                # best-effort: do not fail if these optional fields cannot be read
+                pass
+
             return metadata
     except RasterioIOError as e:
         raise RuntimeError(f"Unable to open raster file '{path}': {e}") from e

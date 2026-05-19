@@ -24,6 +24,7 @@ from .config import (
     OSC_STATUS,
     OSC_PROJECT,
     SCIENTIFIC_EXTENSION,
+    RASTER_EXTENSION,
     DOI,
     DOI_URL,
     SCIENTIFIC_CITATION,
@@ -194,11 +195,76 @@ def create_item_from_raster(
     # update properties on the item
     item.properties.update(properties)
 
-    # Ensure the projection extension is declared on the Item so tools that
-    # understand the projection extension can parse `proj:code` and `proj:bbox`.
+    # Add raster:bands (STAC Raster Extension) entries based on extracted band metadata
+    try:
+        # build concise raster:bands entries
+        raster_bands = []
+        for b in rast_meta.get("bands", []):
+            idx = b.get("band_index")
+            desc = b.get("description")
+            # infer name
+            name = None
+            if desc:
+                dlow = desc.lower()
+                if "coefficient of variation" in dlow or "cv" in dlow:
+                    name = "coefficient_of_variation"
+                elif "area of applicability" in dlow:
+                    name = "area_of_applicability"
+                elif "mean" in dlow or "(mean)" in desc:
+                    name = "trait_mean"
+            if not name:
+                name = f"band_{idx}"
+
+            unit = None
+            try:
+                if idx == 1:
+                    unit = properties.get("trait_unit") or b.get("unit") or "unitless"
+                elif idx == 2:
+                    unit = "%"
+                elif idx == 3:
+                    unit = "binary mask"
+                else:
+                    unit = b.get("unit") or "unitless"
+            except Exception:
+                unit = b.get("unit") or "unitless"
+
+            rb = {
+                "name": name,
+                "description": desc,
+                "data_type": b.get("dtype"),
+                "nodata": b.get("nodata"),
+                "unit": unit,
+                "sampling": "area",
+            }
+            if b.get("tags"):
+                rb["tags"] = b.get("tags")
+            if b.get("overviews"):
+                rb["overviews"] = b.get("overviews")
+            raster_bands.append(rb)
+        if raster_bands:
+            item.properties.setdefault("raster:bands", raster_bands)
+    except Exception:
+        # non-fatal
+        pass
+
+    # keep compact dataset tags parsed earlier
+    try:
+        compact = rast_meta.get("tags") or {}
+        # include a compact subset if available under compact_tags
+        compact_subset = rast_meta.get("compact_tags") if "compact_tags" in rast_meta else {}
+        if compact_subset:
+            item.properties.setdefault("dataset_tags", compact_subset)
+        elif compact:
+            item.properties.setdefault("dataset_tags", compact)
+    except Exception:
+        pass
+
+    # Ensure the projection and raster extensions are declared on the Item
     item_exts = list(item.stac_extensions or [])
     if PROJECTION_EXTENSION not in item_exts:
         item_exts.append(PROJECTION_EXTENSION)
+    if RASTER_EXTENSION not in item_exts:
+        item_exts.append(RASTER_EXTENSION)
     item.stac_extensions = item_exts
 
     return item
