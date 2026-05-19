@@ -1,7 +1,7 @@
 __pycache__/
 *.pyc
 .env
-outputs/
+#outputs/
 **/pycache/**
 *.sqlite
 *.gpkg
@@ -223,3 +223,4 @@ __marimo__/
 # CUSTOM
 data/global_trai_data/
 data/training/data
+outputs
