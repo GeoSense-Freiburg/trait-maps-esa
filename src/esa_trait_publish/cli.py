@@ -12,6 +12,11 @@ from pathlib import Path
 from typing import Optional
 
 from .stac_builder import build_collection_from_directory, save_collection
+from .stac_builder import (
+	infer_product_status_from_path,
+	load_existing_collection,
+	merge_items_into_collection,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -40,6 +45,18 @@ def build_parser() -> argparse.ArgumentParser:
 		required=True,
 		help="Directory to write the STAC collection to",
 	)
+
+	p.add_argument(
+		"--allow-unknown-status",
+		action="store_true",
+		help="Allow unknown product status and use 'unknown' instead of failing",
+	)
+
+	p.add_argument(
+		"--preserve-existing-items",
+		action="store_true",
+		help="Do not overwrite existing item JSON files; only add new items",
+	)
 	return p
 
 
@@ -57,8 +74,38 @@ def main(argv: Optional[list[str]] = None) -> None:
 	stat_metadata = Path(args.stat_metadata)
 	output_dir = Path(args.output_dir)
 
-	collection = build_collection_from_directory(maps_dir, trait_metadata, stat_metadata)
-	written = save_collection(collection, output_dir)
+	# infer status and attach to items created from this run
+	try:
+		status = infer_product_status_from_path(maps_dir)
+	except ValueError:
+		if args.allow_unknown_status:
+			status = "unknown"
+		else:
+			raise
+
+	new_collection = build_collection_from_directory(maps_dir, trait_metadata, stat_metadata)
+
+	# attach product_status to each item
+	for it in new_collection.get_items():
+		it.properties = it.properties or {}
+		it.properties.setdefault("trait_map:product_status", status)
+
+	# if an existing collection exists, load and merge
+	existing = load_existing_collection(output_dir)
+	if existing is not None:
+		existing_coll, existing_ids = existing
+		# merge items (skip duplicates); pass existing_ids to avoid resolving items
+		merged = merge_items_into_collection(
+			existing_coll,
+			list(new_collection.get_items()),
+			preserve_existing=args.preserve_existing_items,
+			status=status,
+			existing_ids=existing_ids,
+		)
+		# save merged collection without overwriting existing item files when requested
+		written = save_collection(merged, output_dir, overwrite_items=not args.preserve_existing_items, additional_items=list(new_collection.get_items()))
+	else:
+		written = save_collection(new_collection, output_dir, overwrite_items=not args.preserve_existing_items, additional_items=list(new_collection.get_items()))
 
 	print(f"Saved collection to: {output_dir}")
 	print(f"Items written: {written}")

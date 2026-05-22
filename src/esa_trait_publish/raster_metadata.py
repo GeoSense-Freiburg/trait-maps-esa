@@ -77,6 +77,21 @@ def extract_raster_metadata(path: Path) -> Dict[str, Any]:
             if res:
                 metadata["resolution"] = res
 
+            # affine transform (a, b, c, d, e, f) from rasterio's Affine
+            # Convert to plain Python floats and keep only the first 6 values
+            # to make the value JSON-serializable and STAC-friendly.
+            try:
+                tr = getattr(src, "transform", None)
+                if tr is not None:
+                    # list(Affine) yields 6 values: (a, b, c, d, e, f)
+                    tlist = list(tr)
+                    # ensure numeric floats
+                    tlist_num = [float(x) for x in tlist[:6]]
+                    metadata["transform"] = tlist_num
+            except Exception:
+                # best-effort; do not fail if transform cannot be read
+                pass
+
             # Attempt to compute a WGS84 bbox and simple polygon geometry. If
             # the raster has a valid CRS we try to transform bounds to EPSG:4326.
             try:
@@ -166,13 +181,49 @@ def extract_raster_metadata(path: Path) -> Dict[str, Any]:
                     except Exception:
                         bm["description"] = None
                     try:
-                        bm["tags"] = src.tags(i) or {}
+                        # read per-band tags but remove GDAL STATISTICS_* entries
+                        raw_tags = src.tags(i) or {}
+                        bm_tags = {k: v for k, v in raw_tags.items() if not k.upper().startswith("STATISTICS_")}
+                        bm["tags"] = bm_tags
                     except Exception:
                         bm["tags"] = {}
                     try:
                         bm["overviews"] = src.overviews(i)
                     except Exception:
                         bm["overviews"] = []
+                    # extract per-band scale/offset if available in tags or description
+                    try:
+                        tags_i = bm.get("tags") or {}
+                        # common keys: SCALE, OFFSET or scale_factor/add_offset
+                        scale = None
+                        offset = None
+                        for k, v in tags_i.items():
+                            kl = k.lower()
+                            if "scale" in kl and scale is None:
+                                try:
+                                    scale = float(v)
+                                except Exception:
+                                    pass
+                            if "offset" in kl and offset is None:
+                                try:
+                                    offset = float(v)
+                                except Exception:
+                                    pass
+                        if scale is None and src.scales and len(src.scales) >= i:
+                            try:
+                                scale = float(src.scales[i - 1])
+                            except Exception:
+                                pass
+                        if offset is None and src.offsets and len(src.offsets) >= i:
+                            try:
+                                offset = float(src.offsets[i - 1])
+                            except Exception:
+                                pass
+                        bm["scale"] = scale
+                        bm["offset"] = offset
+                    except Exception:
+                        bm["scale"] = None
+                        bm["offset"] = None
                     # mask flags per band sometimes available; omit if not
                     bm["mask_flags"] = None
                     band_list.append(bm)
