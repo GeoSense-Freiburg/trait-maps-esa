@@ -34,26 +34,8 @@ from .config import (
     KEYWORDS,
     PROVIDERS,
     ROOT_HREF,
+    PRODUCT_TITLE,
 )
-
-
-def doi_to_url(doi: str) -> Optional[str]:
-    """Normalize a DOI string to a full https://doi.org/... URL.
-
-    - If doi is empty/None return None
-    - If it already starts with http(s)://doi.org return as-is
-    - If it starts with doi.org/ prepend https://
-    - Otherwise prepend https://doi.org/
-    """
-    if not doi:
-        return None
-    s = str(doi).strip()
-    if s.lower().startswith("http://doi.org") or s.lower().startswith("https://doi.org"):
-        return s
-    if s.lower().startswith("doi.org/"):
-        return "https://" + s
-    # bare DOI like 10.5281/zenodo.14646322
-    return "https://doi.org/" + s
 
 from .filename_parser import parse_filename
 from .raster_metadata import extract_raster_metadata
@@ -62,6 +44,26 @@ from .trait_metadata import (
     load_stat_metadata,
     build_metadata_record,
 )
+
+from .config import PRODUCT_TITLE, CATALOG_ID, COLLECTION_ID, FULL_STAC_CATALOG_URL
+
+
+def doi_to_url(doi: Optional[str]) -> Optional[str]:
+    """Normalize DOI strings to a full https://doi.org/... URL.
+
+    - If doi is already a URL (starts with http/https) return as-is.
+    - If doi looks like a bare DOI (e.g. 10.5281/zenodo.14646322), prepend https://doi.org/.
+    - Return None for falsy inputs.
+    """
+    if not doi:
+        return None
+    doi = str(doi).strip()
+    if doi.lower().startswith("http://") or doi.lower().startswith("https://"):
+        return doi
+    # Avoid double prefix if someone provided doi:// or similar
+    if doi.startswith("doi:"):
+        doi = doi.split(":", 1)[1]
+    return f"https://doi.org/{doi}"
 
 
 def infer_product_status_from_path(path: Path) -> str:
@@ -162,78 +164,43 @@ def create_item_from_raster(
 ) -> pystac.Item:
     """Create a pystac.Item for a single raster file.
 
-    Args:
-        raster_path: path to a GeoTIFF/COG
-        trait_mapping: loaded trait mapping JSON (dict)
-        stat_mapping: loaded statistic mapping JSON (dict)
-
-    Returns:
-        pystac.Item: item describing the raster
-
-    Raises:
-        RuntimeError: if raster metadata cannot be read or item cannot be created
+    Parse the filename, read raster metadata, and create a minimal
+    pystac.Item with a single 'data' asset. This function deliberately
+    does not perform any filesystem writes (catalog/collection writes are
+    handled by save_collection).
     """
     raster_path = Path(raster_path)
 
-    # 1. parse filename
+    # parse and merge metadata
     parsed = parse_filename(raster_path)
-
-    # 2. extract raster metadata (may raise)
     rast_meta = extract_raster_metadata(raster_path)
-
-    # 3. build merged metadata record
     record = build_metadata_record(parsed, trait_mapping, stat_mapping)
 
-    # merge core scientific metadata into properties (keep it minimal)
-    properties = {
+    # prepare core properties
+    properties: Dict = {
         "trait_id": record.get("trait_id"),
         "trait_short_name": record.get("trait_short_name"),
         "trait_long_name": record.get("trait_long_name"),
         "trait_unit": record.get("trait_unit"),
     }
 
-    # Human-readable title and description to improve catalog UX
+    # human-readable title/description
     try:
         properties.setdefault("title", build_item_title(record.get("trait_long_name"), record.get("stat_name")))
         properties.setdefault("description", build_item_description(record.get("trait_long_name"), record.get("stat_name")))
     except Exception:
-        # non-fatal; leave properties unchanged on error
         pass
 
-    # TODO: add OSC-specific properties (extensions) here when available
-
-    # stable id derived from stem
+    # stable id
     item_id = parsed.get("stem") or raster_path.stem
 
-    # Use WGS84 geometry and bbox when available. If a WGS84 geometry can be
-    # created from raster bounds, set geometry and top-level bbox accordingly.
-    # Otherwise, leave geometry None and do not set a top-level bbox (STAC
-    # requires bbox/geometry to be WGS84).
+    # geometry and bbox (WGS84) if available
     wgs_bbox = rast_meta.get("bbox")
     geometry = rast_meta.get("geometry")
-    dt = None
-
-    # For STAC core: set top-level bbox and datetime handling.
-    # These maps are static prediction products without an observation time
-    # axis. The publication date is product-level metadata and belongs on the
-    # Collection (see `published` in collection.extra_fields). Therefore each
-    # Item must NOT claim an observation instant or interval. Set the item's
-    # top-level `datetime` to null and do not include `start_datetime`/
-    # `end_datetime`.
-    # Only include bbox when we have a valid WGS84 geometry (to avoid
-    # including projected coordinates in top-level bbox). If geometry is
-    # present, set bbox to the WGS84 bbox; otherwise leave bbox None.
     item_bbox = wgs_bbox if geometry is not None else None
 
-    # pystac requires start/end datetimes when datetime is None. Use an
-    # internal placeholder interval to satisfy the library, but these keys
-    # will be removed when the Item is serialized to JSON so published Items
-    # do not claim an observation interval.
+    # placeholder datetimes for pystac; items represent published products
     start_end_placeholder = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
-
-    # Use publication date as the item's datetime (product publication /
-    # version timestamp). The product itself has no observation time axis;
-    # the datetime here reflects the publication timestamp.
     try:
         published_dt = datetime.datetime.fromisoformat(PUBLISHED_DATE.replace("Z", "+00:00"))
     except Exception:
@@ -244,41 +211,29 @@ def create_item_from_raster(
         geometry=geometry,
         bbox=item_bbox,
         datetime=published_dt,
-        # keep in-memory start/end placeholders for pystac but these will not
-        # be serialized into the published JSON
         start_datetime=start_end_placeholder,
         end_datetime=start_end_placeholder,
         properties=properties,
     )
 
-    # add asset
-    # Resolve asset href: allow hosted URLs for publication while preserving
-    # local absolute paths for debugging when no base is provided.
-    # Preferred: callers can provide `asset_href_resolver` (callable) or a
-    # simple `base_asset_href` string. If both are provided, resolver wins.
-    # Determine asset href: resolver wins, otherwise build from explicit
-    # base_asset_href or the configured Zenodo base URL, with a local path
-    # fallback for debugging.
+    # resolve asset href and add asset
     if asset_href_resolver is not None:
         href = asset_href_resolver(raster_path)
     else:
         href = build_asset_href(raster_path, base=base_asset_href)
 
-    media_type = COG_MEDIA_TYPE
-    # Build a human-readable asset title from trait/stat where possible
     try:
         asset_title = build_item_title_short(record.get("trait_long_name"), record.get("stat_name")) + " Raster"
     except Exception:
         asset_title = "Raster"
 
-    asset = pystac.Asset(href=href, media_type=media_type, roles=["data"], title=asset_title)
+    asset = pystac.Asset(href=href, media_type=COG_MEDIA_TYPE, roles=["data"], title=asset_title)
     item.add_asset("data", asset)
 
-    # Defensive check: ensure the asset was added
     if "data" not in (item.assets or {}):
         raise RuntimeError(f"Item {item_id} missing required 'data' asset (href={href})")
 
-    # store projection fields using projection extension keys only
+    # projection and raster metadata
     native_bbox = rast_meta.get("native_bbox")
     if rast_meta.get("crs") is not None:
         try:
@@ -288,23 +243,20 @@ def create_item_from_raster(
             item.properties.setdefault("proj:code", str(rast_meta.get("crs")))
     if native_bbox:
         item.properties.setdefault("proj:bbox", native_bbox)
-    # proj:transform from raster metadata (list of 6 numeric values)
     try:
         tr = rast_meta.get("transform")
         if tr and isinstance(tr, (list, tuple)):
-            # ensure we have numeric values and exactly 6 elements
             tvals = [float(x) for x in list(tr)[:6]]
             item.properties.setdefault("proj:transform", tvals)
     except Exception:
         pass
-    # proj:shape and proj:transform if available
     try:
         if rast_meta.get("width") and rast_meta.get("height"):
             item.properties.setdefault("proj:shape", [rast_meta.get("height"), rast_meta.get("width")])
     except Exception:
         pass
 
-    # keep lightweight user-facing GSD (ground sampling distance) as integer meters
+    # gsd
     try:
         res = rast_meta.get("resolution")
         if res and isinstance(res, (list, tuple)) and res[0]:
@@ -312,25 +264,19 @@ def create_item_from_raster(
     except Exception:
         pass
 
-    # attach compact dataset tags (only selected fields). If compact_tags is
-    # not provided try the raw dataset tags extracted from the TIFF. Ensure we
-    # do not include any transform/resolution/crs/affine strings — those belong
-    # only under proj:* keys.
+    # compact dataset tags
     try:
         compact = rast_meta.get("compact_tags") or rast_meta.get("tags") or {}
-        # drop any keys that are transform-like to avoid duplication
         banned_tag_keys = {"transform", "affine", "resolution", "crs", "width", "height", "spatial_extent"}
         compact_filtered = {k: v for k, v in compact.items() if k.lower() not in banned_tag_keys}
-        # Only include genuinely item-specific scientific metadata in dataset_tags.
-        # Do NOT include contact/provenance fields here (they belong on the Collection).
-        allowed = {"model_performance", "pfts", "source_creation_date", "usage_notes", "keywords"}#"language", "geospatial_units"
+        allowed = {"model_performance", "pfts", "source_creation_date", "usage_notes", "keywords"}
         dataset_tags = {k: v for k, v in compact_filtered.items() if k in allowed}
         if dataset_tags:
             item.properties.setdefault("dataset_tags", dataset_tags)
     except Exception:
         pass
 
-    # Build raster:bands entries and attach them to the asset (assets.data)
+    # raster bands metadata stored temporarily for serialization step
     try:
         bands_meta = rast_meta.get("bands", [])
         if bands_meta:
@@ -349,7 +295,6 @@ def create_item_from_raster(
                     name = f"band_{idx}"
 
                 unit = b.get("unit") or None
-                # apply unit heuristics when missing
                 if not unit:
                     if idx == 1:
                         unit = record.get("trait_unit") or "unitless"
@@ -368,7 +313,6 @@ def create_item_from_raster(
                     "unit": unit,
                     "sampling": "area",
                 }
-                # include scale/offset when present
                 if b.get("scale") is not None:
                     rb["scale"] = b.get("scale")
                 if b.get("offset") is not None:
@@ -379,26 +323,19 @@ def create_item_from_raster(
                     rb["overviews"] = b.get("overviews")
                 raster_bands.append(rb)
 
-            # attach to the asset dict (item.assets -> data)
-            try:
-                # ensure the asset dict exists on the item
-                asset_dict = item.assets.get("data")
-                # pystac.Asset -> we will ensure serialized JSON contains raster:bands
-            except Exception:
-                asset_dict = None
-            # We'll move raster_bands into the serialized JSON later (in save_collection)
-            # to avoid modifying pystac Asset internals here. Store temporarily in properties
             item.properties.setdefault("_raster_bands_tmp", raster_bands)
     except Exception:
         pass
 
-    # Ensure the projection and raster extensions are declared on the Item
+    # declare extensions
     item_exts = list(item.stac_extensions or [])
     if PROJECTION_EXTENSION not in item_exts:
         item_exts.append(PROJECTION_EXTENSION)
     if RASTER_EXTENSION not in item_exts:
         item_exts.append(RASTER_EXTENSION)
     item.stac_extensions = item_exts
+
+    return item
 
     return item
 
@@ -794,10 +731,8 @@ def create_collection() -> pystac.Collection:
     # during JSON sanitization in `save_collection` to keep serialized output
     # free of absolute filesystem paths.
     coll.add_link(pystac.Link("self", "./collection.json", media_type="application/json"))
-    # Normalize DOI URL when present
-    doi_norm = doi_to_url(DOI_URL) or DOI_URL
-    coll.add_link(pystac.Link("describedby", doi_norm, media_type="text/html", title="Zenodo record"))
-    coll.add_link(pystac.Link("cite-as", doi_norm, media_type="text/html", title="Dataset DOI"))
+    coll.add_link(pystac.Link("describedby", DOI_URL, media_type="text/html", title="Zenodo record"))
+    coll.add_link(pystac.Link("cite-as", DOI_URL, media_type="text/html", title="Dataset DOI"))
 
     return coll
 
@@ -809,16 +744,15 @@ def build_collection_from_directory(
     base_asset_href: Optional[str] = None,
     asset_href_resolver: Optional[Callable[[Path], str]] = None,
 ) -> pystac.Collection:
-    """Build a STAC Collection populated from rasters in `maps_dir`.
-
-    Args:
-        maps_dir: directory containing raster products (*.tif, *.tiff)
-        trait_metadata_path: path to trait_mapping.json
-        stat_metadata_path: path to trait_stat_mapping.json
-
-    Returns:
-        populated pystac.Collection
-    """
+    # Build a STAC Collection populated from rasters in `maps_dir`.
+    #
+    # Args:
+    #     maps_dir: directory containing raster products (*.tif, *.tiff)
+    #     trait_metadata_path: path to trait_mapping.json
+    #     stat_metadata_path: path to trait_stat_mapping.json
+    #
+    # Returns:
+    #     populated pystac.Collection
     maps_dir = Path(maps_dir)
     trait_map = load_trait_metadata(Path(trait_metadata_path))
     stat_map = load_stat_metadata(Path(stat_metadata_path))
@@ -830,13 +764,11 @@ def build_collection_from_directory(
     logger = logging.getLogger(__name__)
 
     def is_valid_raster_file(path: Path) -> bool:
-        """Return True for real raster files we should process.
-
-        Rules:
-        - only accept names that end exactly with .tif or .tiff (case-insensitive)
-        - reject files beginning with '._' (resource forks) or '.' (hidden)
-        - require the path to be a regular file
-        """
+        # Return True for real raster files we should process.
+        # Rules:
+        #  - only accept names that end exactly with .tif or .tiff (case-insensitive)
+        #  - reject files beginning with '._' (resource forks) or '.' (hidden)
+        #  - require the path to be a regular file
         name = path.name
         # Exclude resource-fork and hidden files
         if name.startswith("._"):
@@ -898,13 +830,12 @@ def save_collection(
     write_earthcode_registry: bool = False,
     earthcode_registry_output_dir: Optional[Path] = None,
     full_stac_catalog_url: Optional[str] = None,
-) -> int:
-    """Save the collection and contained items to `output_dir` as a self-contained catalog.
-
-    Args:
-        collection: collection to save
-        output_dir: directory to write the collection to
-    """
+)-> int:
+    # Save the collection and contained items to `output_dir` as a self-contained catalog.
+    #
+    # Args:
+    #     collection: collection to save
+    #     output_dir: directory to write the collection to
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -964,12 +895,11 @@ def save_collection(
     # serialization time to avoid pystac attempting to resolve the target.
     collection.add_link(pystac.Link("self", "./collection.json", media_type="application/json"))
     if get_collection_config().get("zenodo_doi_url"):
-        doi_raw = get_collection_config().get("zenodo_doi_url")
-        doi_norm = doi_to_url(doi_raw) or doi_raw
+        doi = get_collection_config().get("zenodo_doi_url")
         # keep describedby for the DOI landing page
-        collection.add_link(pystac.Link("describedby", doi_norm, media_type="text/html"))
+        collection.add_link(pystac.Link("describedby", doi, media_type="text/html"))
         # add a canonical cite-as relation pointing to the DOI (configurable)
-        collection.add_link(pystac.Link("cite-as", doi_norm, media_type="text/html", title="Dataset DOI"))
+        collection.add_link(pystac.Link("cite-as", doi, media_type="text/html", title="Dataset DOI"))
 
     # We'll accumulate item links for the collection and write items manually
     collection_item_links: List[dict] = []
@@ -1166,15 +1096,10 @@ def save_collection(
                 a["roles"] = ["data"]
 
         # desired links for item (relative to items/ directory)
-        # Items should point root to the top-level catalog (../catalog.json)
-        # and keep parent/collection pointing to ../collection.json
+        # Item root should point to the top-level catalog (catalog.json)
+        # Use a relative path from items/ -> ../catalog.json and include type/title
         item_links = [
-            {
-                "rel": "root",
-                "href": "../catalog.json",
-                "type": "application/json",
-                "title": "Global Plant Functional Trait Maps STAC Catalog",
-            },
+            {"rel": "root", "href": "../catalog.json", "type": "application/json", "title": PRODUCT_TITLE},
             {"rel": "parent", "href": "../collection.json", "type": "application/json", "title": coll_title},
             {"rel": "collection", "href": "../collection.json", "type": "application/json", "title": coll_title},
             {"rel": "self", "href": f"./{item.id}.json", "type": "application/geo+json"},
@@ -1363,32 +1288,27 @@ def save_collection(
 
     # Sanitize links in the serialized collection JSON to avoid absolute
     # filesystem paths leaking into the output. Ensure `self` is a relative
-    # ./collection.json with type application/json and inject root/parent
-    # links that point to the top-level catalog (./catalog.json).
+    # ./collection.json with type application/json and keep describedby as HTML.
     links = coll_json.get("links", []) or []
     sanitized_links = []
-
-    # canonical root/parent target is the top-level catalog
+    # Inject a canonical root and parent link that point to the top-level
+    # catalog entry. We intentionally serialize these as './catalog.json'
+    # so published collection.json references the local catalog entry.
     root_href_serialized = "./catalog.json"
-    root_link_dict = {"rel": "root", "href": root_href_serialized, "type": "application/json", "title": "Global Plant Functional Trait Maps STAC Catalog"}
-    parent_link_dict = {"rel": "parent", "href": root_href_serialized, "type": "application/json", "title": "Global Plant Functional Trait Maps STAC Catalog"}
+    # build root and parent link dicts now so they appear first
+    root_link_dict = {"rel": "root", "href": root_href_serialized, "type": "application/json"}
+    parent_link_dict = {"rel": "parent", "href": root_href_serialized, "type": "application/json", "title": coll_title}
 
     for l in links:
         rel = l.get("rel")
-        # skip any existing root/parent links (we inject canonical ones)
-        if rel in ("root", "parent"):
+        # skip any existing root links (we inject a canonical one)
+        if rel == "root":
             continue
         if rel == "self":
             sanitized_links.append({"rel": "self", "href": "./collection.json", "type": "application/json"})
         elif rel == "describedby":
-            # use configured DOI landing page when available and normalize it
-            doi_raw = get_collection_config().get("zenodo_doi_url")
-            doi_url = doi_to_url(doi_raw) or doi_raw
-            sanitized_links.append({"rel": "describedby", "href": doi_url, "type": "text/html"})
-        elif rel == "cite-as":
-            doi_raw = get_collection_config().get("zenodo_doi_url")
-            doi_url = doi_to_url(doi_raw) or doi_raw
-            sanitized_links.append({"rel": "cite-as", "href": doi_url, "type": "text/html", "title": "Dataset DOI"})
+            # use configured DOI landing page when available
+            sanitized_links.append({"rel": "describedby", "href": get_collection_config().get("zenodo_doi_url"), "type": "text/html"})
         else:
             # keep other links (item links should already be relative)
             sanitized_links.append(l)
@@ -1428,12 +1348,6 @@ def save_collection(
     # hosted catalog URL when provided.
     if write_earthcode_registry:
         try:
-            from .config import (
-                FULL_STAC_CATALOG_URL,
-                EARTHCODE_REGISTRY_OUTPUT_DIR,
-                COLLECTION_ID,
-            )
-
             # Determine output dir (CLI override takes precedence)
             registry_out = earthcode_registry_output_dir or (Path(EARTHCODE_REGISTRY_OUTPUT_DIR) if EARTHCODE_REGISTRY_OUTPUT_DIR else None)
             if registry_out:
@@ -1460,14 +1374,14 @@ def save_collection(
                     "links": [],
                 }
 
-                # Add DOI links
+                # Add DOI links (normalize to https://doi.org/... when possible)
                 doi = None
                 try:
                     doi = collection.extra_fields.get("sci:doi")
                 except Exception:
                     doi = None
-                if doi:
-                    doi_url = doi_to_url(doi) or doi
+                doi_url = doi_to_url(doi) if doi else None
+                if doi_url:
                     reg["links"].append({"rel": "describedby", "href": doi_url, "type": "text/html"})
                     reg["links"].append({"rel": "cite-as", "href": doi_url, "type": "text/html", "title": "Dataset DOI"})
 
