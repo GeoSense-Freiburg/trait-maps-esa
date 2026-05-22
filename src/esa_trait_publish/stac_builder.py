@@ -302,7 +302,9 @@ def create_item_from_raster(
         # drop any keys that are transform-like to avoid duplication
         banned_tag_keys = {"transform", "affine", "resolution", "crs", "width", "height", "spatial_extent"}
         compact_filtered = {k: v for k, v in compact.items() if k.lower() not in banned_tag_keys}
-        allowed = {"model_performance", "pfts", "source_creation_date", "usage_notes", "keywords", "author", "contact", "organization"}#"language", "geospatial_units"}
+        # Only include genuinely item-specific scientific metadata in dataset_tags.
+        # Do NOT include contact/provenance fields here (they belong on the Collection).
+        allowed = {"model_performance", "pfts", "source_creation_date", "usage_notes", "keywords"}#"language", "geospatial_units"
         dataset_tags = {k: v for k, v in compact_filtered.items() if k in allowed}
         if dataset_tags:
             item.properties.setdefault("dataset_tags", dataset_tags)
@@ -560,17 +562,10 @@ def _parse_dataset_tags(raw: dict) -> Optional[dict]:
     if isinstance(lang, str) and lang.strip():
         out["language"] = lang
 
-    org = raw.get("organization") or raw.get("Organization") or raw.get("ORGANIZATION")
-    if isinstance(org, str) and org.strip():
-        out["organization"] = org
-
-    author = raw.get("author") or raw.get("Author")
-    if isinstance(author, str) and author.strip():
-        out["author"] = author
-
-    contact = raw.get("contact") or raw.get("Contact")
-    if isinstance(contact, str) and contact.strip():
-        out["contact"] = contact
+    # Note: do NOT include contact/author/organization in parsed dataset_tags.
+    # These provenance fields are collection-level metadata and should not be
+    # duplicated in every Item. Any such keys will be stripped later during
+    # sanitization to ensure the collection is authoritative.
 
     geounits = raw.get("geospatial_units") or raw.get("geospatialUnits")
     if isinstance(geounits, str) and geounits.strip():
@@ -738,7 +733,12 @@ def create_collection() -> pystac.Collection:
     providers = []
     for p in PROVIDERS:
         try:
-            provider = pystac.Provider(name=p.get("name"), roles=p.get("roles"))
+            # Augment known provider metadata where appropriate (do not mutate global config)
+            pcopy = dict(p)
+            if pcopy.get("name") and "University of Freiburg" in pcopy.get("name"):
+                # ensure a URL is present for the University provider
+                pcopy.setdefault("url", "https://geosense.uni-freiburg.de")
+            provider = pystac.Provider(name=pcopy.get("name"), roles=pcopy.get("roles"), url=pcopy.get("url"))
             providers.append(provider)
         except Exception:
             # Fall back to raw dict; pystac will accept list of dicts in some versions
@@ -751,6 +751,22 @@ def create_collection() -> pystac.Collection:
     ef.setdefault("sci:citation", SCIENTIFIC_CITATION)
     # publication date
     ef.setdefault("published", PUBLISHED_DATE)
+    coll.extra_fields = ef
+
+    # Add authoritative contact/provenance metadata at the collection level.
+    # Place under a namespaced custom field to avoid introducing unsupported
+    # top-level STAC fields. Tools can still discover this metadata easily.
+    contacts = [
+        {
+            "name": "Daniel Lusk",
+            "role": "creator",
+            "email": "daniel.lusk@geosense.uni-freiburg.de",
+            "organization": "Department for Sensor-based Geoinformatics, University of Freiburg",
+        }
+    ]
+    # Attach under a namespaced key to avoid STAC validation issues with unknown top-level keys
+    ef = coll.extra_fields or {}
+    ef.setdefault("trait_map:contacts", contacts)
     coll.extra_fields = ef
 
     # add placeholder links (use Link constructor for broad pystac compatibility)
@@ -1028,6 +1044,9 @@ def save_collection(
                 dataset_tags_raw.pop(tk, None)
         parsed = _parse_dataset_tags(dataset_tags_raw)
         if parsed:
+            # Ensure contact/provenance fields are not carried into item-level tags
+            for rm in ("author", "contact", "organization"):
+                parsed.pop(rm, None)
             props["dataset_tags"] = parsed
         else:
             props.pop("dataset_tags", None)
@@ -1200,6 +1219,9 @@ def save_collection(
                 dt_raw.pop(tk, None)
         parsed = _parse_dataset_tags(dt_raw)
         if parsed:
+            # Remove provenance/contact keys so collection-level metadata is authoritative
+            for rm in ("author", "contact", "organization"):
+                parsed.pop(rm, None)
             props["dataset_tags"] = parsed
         else:
             props.pop("dataset_tags", None)
