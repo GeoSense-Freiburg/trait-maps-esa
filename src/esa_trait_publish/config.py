@@ -22,6 +22,25 @@ COLLECTION_CONFIG: Dict[str, object] = {
 	"zenodo_doi_url": "https://doi.org/10.5281/zenodo.14646322",
 }
 
+# Full public catalog configuration (deploy-specific)
+GITHUB_PAGES_BASE_URL = (
+    "https://geosense-freiburg.github.io/trait-maps-esa"
+)
+FULL_STAC_CATALOG_URL = (
+    f"{GITHUB_PAGES_BASE_URL}/outputs/stac_catalog_v1_2/catalog.json"
+)
+
+# Directory where the lightweight EarthCODE/Open Science Catalog registry
+# collection JSON will be written when requested. Leave empty by default.
+EARTHCODE_REGISTRY_OUTPUT_DIR: str = (
+    "outputs/earthcode_registry"
+)
+
+# IDs and titles used for the top-level catalog
+CATALOG_ID: str = "global-plant-trait-maps-catalog"
+COLLECTION_ID: str = "global-plant-trait-maps"
+PRODUCT_TITLE: str = "Global Plant Functional Trait Maps at 1 km Resolution STAC Catalog"
+
 
 COG_MEDIA_TYPE: str = "image/tiff; application=geotiff; profile=cloud-optimized"
 

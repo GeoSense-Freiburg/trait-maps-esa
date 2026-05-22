@@ -57,6 +57,21 @@ def build_parser() -> argparse.ArgumentParser:
 		action="store_true",
 		help="Do not overwrite existing item JSON files; only add new items",
 	)
+	p.add_argument(
+		"--write-earthcode-registry",
+		action="store_true",
+		help="Also write a lightweight EarthCODE/Open Science Catalog registry collection",
+	)
+	p.add_argument(
+		"--earthcode-registry-output-dir",
+		required=False,
+		help="Directory to write the EarthCODE registry collection to (overrides config)",
+	)
+	p.add_argument(
+		"--full-stac-catalog-url",
+		required=False,
+		help="Public URL of the full hosted STAC catalog (used in registry child link)",
+	)
 	return p
 
 
@@ -103,9 +118,25 @@ def main(argv: Optional[list[str]] = None) -> None:
 			existing_ids=existing_ids,
 		)
 		# save merged collection without overwriting existing item files when requested
-		written = save_collection(merged, output_dir, overwrite_items=not args.preserve_existing_items, additional_items=list(new_collection.get_items()))
+		written = save_collection(
+			merged,
+			output_dir,
+			overwrite_items=not args.preserve_existing_items,
+			additional_items=list(new_collection.get_items()),
+			write_earthcode_registry=args.write_earthcode_registry,
+			earthcode_registry_output_dir=Path(args.earthcode_registry_output_dir) if args.earthcode_registry_output_dir else None,
+			full_stac_catalog_url=args.full_stac_catalog_url,
+		)
 	else:
-		written = save_collection(new_collection, output_dir, overwrite_items=not args.preserve_existing_items, additional_items=list(new_collection.get_items()))
+		written = save_collection(
+			new_collection,
+			output_dir,
+			overwrite_items=not args.preserve_existing_items,
+			additional_items=list(new_collection.get_items()),
+			write_earthcode_registry=args.write_earthcode_registry,
+			earthcode_registry_output_dir=Path(args.earthcode_registry_output_dir) if args.earthcode_registry_output_dir else None,
+			full_stac_catalog_url=args.full_stac_catalog_url,
+		)
 
 	print(f"Saved collection to: {output_dir}")
 	print(f"Items written: {written}")

@@ -7,6 +7,7 @@ python scripts/build_stac.py \
   --trait-metadata metadata/trait_mapping.json \
   --stat-metadata metadata/trait_stat_mapping.json \
   --output-dir outputs/stac_maps
+  --write-earthcode-registry
 `
 # Global Plant Trait Maps – STAC Preparation for ESA EarthCODE / APEx
 

@@ -733,12 +733,7 @@ def create_collection() -> pystac.Collection:
     providers = []
     for p in PROVIDERS:
         try:
-            # Augment known provider metadata where appropriate (do not mutate global config)
-            pcopy = dict(p)
-            if pcopy.get("name") and "University of Freiburg" in pcopy.get("name"):
-                # ensure a URL is present for the University provider
-                pcopy.setdefault("url", "https://geosense.uni-freiburg.de")
-            provider = pystac.Provider(name=pcopy.get("name"), roles=pcopy.get("roles"), url=pcopy.get("url"))
+            provider = pystac.Provider(name=p.get("name"), roles=p.get("roles"))
             providers.append(provider)
         except Exception:
             # Fall back to raw dict; pystac will accept list of dicts in some versions
@@ -761,7 +756,7 @@ def create_collection() -> pystac.Collection:
             "name": "Daniel Lusk",
             "role": "creator",
             "email": "daniel.lusk@geosense.uni-freiburg.de",
-            "organization": "Department for Sensor-based Geoinformatics, University of Freiburg",
+            "organization": "Chair of Sensor-based Geoinformatics, University of Freiburg",
         }
     ]
     # Attach under a namespaced key to avoid STAC validation issues with unknown top-level keys
@@ -879,6 +874,9 @@ def save_collection(
     output_dir: Path,
     overwrite_items: bool = True,
     additional_items: Optional[List[pystac.Item]] = None,
+    write_earthcode_registry: bool = False,
+    earthcode_registry_output_dir: Optional[Path] = None,
+    full_stac_catalog_url: Optional[str] = None,
 ) -> int:
     """Save the collection and contained items to `output_dir` as a self-contained catalog.
 
@@ -1371,5 +1369,91 @@ def save_collection(
     coll_json["links"] = [root_link_dict] + sanitized_links
 
     collection_path.write_text(_json.dumps(coll_json, indent=2), encoding="utf-8")
+
+    # Also write a lightweight catalog.json (top-level Catalog) in the same
+    # output directory so the hosted site can serve a small entry point.
+    try:
+        from .config import CATALOG_ID, PRODUCT_TITLE
+
+        catalog = {
+            "type": "Catalog",
+            "id": CATALOG_ID,
+            "stac_version": "1.1.0",
+            "description": "Full STAC catalog for global plant functional trait maps at 1 km resolution.",
+            "title": PRODUCT_TITLE,
+            "links": [
+                {"rel": "self", "href": "./catalog.json", "type": "application/json"},
+                {"rel": "root", "href": "./catalog.json", "type": "application/json"},
+                {"rel": "child", "href": "./collection.json", "type": "application/json", "title": collection.title},
+            ],
+        }
+        catalog_path = output_dir / "catalog.json"
+        catalog_path.write_text(_json.dumps(catalog, indent=2), encoding="utf-8")
+    except Exception:
+        # Non-fatal: continue
+        pass
+
+    # Optionally write a lightweight EarthCODE/Open Science Catalog registry
+    # collection JSON to a separate output directory. This file is intentionally
+    # lightweight (no item links) and includes a child link to the public
+    # hosted catalog URL when provided.
+    if write_earthcode_registry:
+        try:
+            from .config import (
+                FULL_STAC_CATALOG_URL,
+                EARTHCODE_REGISTRY_OUTPUT_DIR,
+                COLLECTION_ID,
+            )
+
+            # Determine output dir (CLI override takes precedence)
+            registry_out = earthcode_registry_output_dir or (Path(EARTHCODE_REGISTRY_OUTPUT_DIR) if EARTHCODE_REGISTRY_OUTPUT_DIR else None)
+            if registry_out:
+                registry_out = Path(registry_out)
+                registry_out.mkdir(parents=True, exist_ok=True)
+                # Build minimal registry collection
+                reg = {
+                    "type": "Collection",
+                    "id": COLLECTION_ID,
+                    "stac_version": "1.1.0",
+                    "title": collection.title,
+                    "description": collection.description,
+                    "license": collection.license,
+                    "keywords": collection.keywords or [],
+                    "providers": [p.to_dict() if hasattr(p, "to_dict") else p for p in (collection.providers or [])],
+                    "trait_map:contacts": collection.extra_fields.get("trait_map:contacts") if collection.extra_fields else None,
+                    "sci:doi": collection.extra_fields.get("sci:doi") if collection.extra_fields else None,
+                    "sci:citation": collection.extra_fields.get("sci:citation") if collection.extra_fields else None,
+                    "published": collection.extra_fields.get("published") if collection.extra_fields else None,
+                    "osc:type": collection.extra_fields.get("osc:type") if collection.extra_fields else None,
+                    "osc:status": collection.extra_fields.get("osc:status") if collection.extra_fields else None,
+                    "osc:project": collection.extra_fields.get("osc:project") if collection.extra_fields else None,
+                    "extent": collection.to_dict().get("extent"),
+                    "links": [],
+                }
+
+                # Add DOI links
+                doi = None
+                try:
+                    doi = collection.extra_fields.get("sci:doi")
+                except Exception:
+                    doi = None
+                if doi:
+                    reg["links"].append({"rel": "describedby", "href": doi, "type": "text/html"})
+                    reg["links"].append({"rel": "cite-as", "href": doi, "type": "text/html", "title": "Dataset DOI"})
+
+                # Add child/via links to the public hosted full catalog URL
+                public_url = full_stac_catalog_url or FULL_STAC_CATALOG_URL
+                if public_url:
+                    reg["links"].append({"rel": "child", "href": public_url, "type": "application/json", "title": "Global Plant Trait Maps full STAC catalog"})
+                    reg["links"].append({"rel": "via", "href": public_url, "type": "application/json", "title": "Access full STAC catalog"})
+
+                # write registry collection
+                reg_path = registry_out / f"{COLLECTION_ID}.json"
+                # Clean None entries
+                reg_clean = {k: v for k, v in reg.items() if v is not None}
+                reg_path.write_text(_json.dumps(reg_clean, indent=2), encoding="utf-8")
+        except Exception:
+            # Non-fatal: continue
+            pass
 
     return len(items_to_write)
