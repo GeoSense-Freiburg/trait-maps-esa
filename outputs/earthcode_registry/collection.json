@@ -19,15 +19,63 @@
     }
   ],
   "contacts": [
-    {
-      "name": "Daniel Lusk",
-      "role": "creator",
-      "email": "daniel.lusk@geosense.uni-freiburg.de",
-      "organization": "Chair of Sensor-based Geoinformatics, University of Freiburg"
-    }
+  {
+    "name": "Prof. Dr. Teja Kattenborn",
+    "emails": [
+      {
+        "value": "Teja.Kattenborn@geosense.uni-freiburg.de"
+      }
+    ],
+    "roles": [
+      "science_leader",
+      "project_manager"
+    ]
+  },
+  {
+    "name": "Prof. Dr. Miguel Mahecha",
+    "roles": [
+      "science_leader"
+    ]
+  },
+  {
+    "name": "Prof. Dr. René Orth",
+    "roles": [
+      "co_science_leader"
+    ]
+  },
+  {
+    "name": "Prof. Dr. Ana Bastos",
+    "roles": [
+      "co_science_leader"
+    ]
+  },
+  {
+    "name": "Dr Sophie Hebden",
+    "roles": [
+      "technical_officer"
+    ]
+  },
+  {
+    "name": "University of Freiburg",
+    "roles": [
+      "consortium_member"
+    ]
+  },
+  {
+    "name": "University of Leipzig",
+    "roles": [
+      "consortium_member"
+    ]
+  }
   ],
   "osc:type": "project",
   "osc:status": "ongoing",
+  "themes": [
+  {
+    "scheme": "https://github.com/stac-extensions/osc#theme",
+    "concepts": [{ "id": "land" }]
+  }
+  ],
   "extent": {
     "spatial": {
       "bbox": [
@@ -53,13 +101,13 @@
       "rel": "root",
       "href": "../../catalog.json",
       "type": "application/json",
-      "title": "EarthCODE Projects Catalog"
+      "title": "Open Science Catalog"
     },
     {
       "rel": "parent",
       "href": "../catalog.json",
       "type": "application/json",
-      "title": "EarthCODE Projects Catalog"
+      "title": "Projects"
     },
     {
       "rel": "self",
@@ -77,7 +125,7 @@
       "rel": "related",
       "href": "../../themes/land/catalog.json",
       "type": "application/json",
-      "title": "Land themes catalog"
+      "title": "Theme: Land"
     }
   ]
 }
