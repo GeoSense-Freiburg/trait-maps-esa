@@ -46,6 +46,7 @@
     "trait_unit": "mg g\u207b\u00b9",
     "title": "Leaf nitrogen (N) content per leaf dry mass \u2014 Global 1 km Plant Trait Map",
     "description": "Global 1 km map of community-weighted statistic leaf nitrogen (n) content per leaf dry mass derived from GBIF, sPlot, TRY, and Earth observation predictors.",
+    "datetime": "2026-01-30T00:00:00Z",
     "proj:code": "EPSG:6933",
     "proj:bbox": [
       -17367530.445161372,
@@ -166,6 +167,5 @@
       ]
     }
   },
-  "collection": "global-plant-trait-maps",
-  "datetime": "2026-01-30T00:00:00Z"
+  "collection": "global-plant-trait-maps"
 }
