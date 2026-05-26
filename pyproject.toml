@@ -4,9 +4,10 @@ version = "0.1.0"
 requires-python = ">=3.10"
 
 dependencies = [
-    "pystac",
+    "pystac[validation]",
     "rasterio",
     "pandas",
+    "pystack>=1.6.0",
 ]
 
 [project.optional-dependencies]
