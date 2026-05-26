@@ -231,21 +231,28 @@ def create_item_from_raster(
     # do not claim an observation interval.
     start_end_placeholder = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
 
-    # Use publication date as the item's datetime (product publication /
-    # version timestamp). The product itself has no observation time axis;
-    # the datetime here reflects the publication timestamp.
+    # Use publication date as item-level metadata, but store it under
+    # properties['datetime'] so the serialized Item JSON places datetime in
+    # properties (authoritative) while avoiding top-level datetime. Pystac
+    # still requires in-memory placeholders for start/end datetimes in some
+    # versions; keep them but set top-level datetime to None.
     try:
         published_dt = datetime.datetime.fromisoformat(PUBLISHED_DATE.replace("Z", "+00:00"))
     except Exception:
         published_dt = start_end_placeholder
 
+    # place publication datetime into properties (ISO string)
+    try:
+        properties.setdefault("datetime", PUBLISHED_DATE)
+    except Exception:
+        properties["datetime"] = PUBLISHED_DATE
+
     item = pystac.Item(
         id=item_id,
         geometry=geometry,
         bbox=item_bbox,
-        datetime=published_dt,
-        # keep in-memory start/end placeholders for pystac but these will not
-        # be serialized into the published JSON
+        datetime=None,
+        # keep in-memory start/end placeholders for pystac compatibility
         start_datetime=start_end_placeholder,
         end_datetime=start_end_placeholder,
         properties=properties,
@@ -973,10 +980,9 @@ def save_collection(
     collection_item_links: List[dict] = []
 
     for item in items_to_write:
-        # remove temporal keys from properties if present (they belong top-level)
-        for tf in ("start_datetime", "end_datetime", "datetime"):
-            if tf in (item.properties or {}):
-                item.properties.pop(tf, None)
+        # Do not remove properties['datetime'] here; store publication date
+        # in properties['datetime'] (authoritative) and remove top-level
+        # datetime later when serializing.
 
         # Ensure human-readable title/description are present on the Item
         # object so they are included by pystac when converting to dict.
@@ -1023,7 +1029,7 @@ def save_collection(
                 existing_props = existing.get("properties", {}) or {}
                 mem_props = item.properties or {}
                 # keys we want to ensure exist from the in-memory item when missing
-                ensure_keys = ("proj:transform", "proj:code", "proj:bbox", "proj:shape", "gsd", "trait_unit", "title", "description")
+                ensure_keys = ("proj:transform", "proj:code", "proj:bbox", "proj:shape", "gsd", "trait_unit", "title", "description", "datetime")
                 for k in ensure_keys:
                     if k not in existing_props and k in mem_props and mem_props.get(k) is not None:
                         existing_props[k] = mem_props.get(k)
@@ -1035,7 +1041,8 @@ def save_collection(
 
         # Sanitize the item JSON thoroughly: helper inlined for clarity
         raw_props = item_json.get("properties", {}) or {}
-        props = {k: v for k, v in raw_props.items() if k not in ("datetime", "start_datetime", "end_datetime")}
+        # preserve properties['datetime'] (authoritative); drop temporal placeholders
+        props = {k: v for k, v in raw_props.items() if k not in ("start_datetime", "end_datetime")}
 
         # Remove internal-only metadata and conflicting license/rights
         for internal in ("stat_id", "stat_name", "license", "rights"):
@@ -1090,12 +1097,14 @@ def save_collection(
 
         item_json["properties"] = props
 
-        # Set top-level datetime to publication date and remove temporal placeholders
-        item_json["datetime"] = PUBLISHED_DATE
+        # Remove top-level temporal placeholders and ensure top-level datetime
+        # is not present. The authoritative datetime lives in
+        # properties['datetime'] (ISO string).
+        item_json.pop("datetime", None)
         item_json.pop("start_datetime", None)
         item_json.pop("end_datetime", None)
 
-    # Move raster bands stored temporarily in properties into the data asset
+        # Move raster bands stored temporarily in properties into the data asset
         # Also handle legacy cases where raster:bands may exist in properties
         tmp_bands = None
         if isinstance(raw_props.get("_raster_bands_tmp"), list):
@@ -1182,6 +1191,14 @@ def save_collection(
         # write item to items/{id}.json
         item_path = items_dir / f"{item.id}.json"
         try:
+            # Ensure authoritative datetime is present in properties before writing
+            try:
+                pprops = item_json.get("properties", {}) or {}
+                if not pprops.get("datetime"):
+                    pprops["datetime"] = PUBLISHED_DATE
+                    item_json["properties"] = pprops
+            except Exception:
+                pass
             # Always write sanitized JSON. When preserving items we still want
             # to remove sensitive or redundant metadata (license, embedded
             # TIFF tags, etc.). This updates metadata without changing asset
@@ -1215,7 +1232,14 @@ def save_collection(
             continue
 
         raw_props = jd.get("properties", {}) or {}
-        props = {k: v for k, v in raw_props.items() if k not in ("datetime", "start_datetime", "end_datetime")}
+        # preserve properties['datetime'] (authoritative); drop temporal placeholders
+        props = {k: v for k, v in raw_props.items() if k not in ("start_datetime", "end_datetime")}
+        # ensure properties['datetime'] exists and is set to the publication date
+        if not props.get("datetime"):
+            try:
+                props["datetime"] = PUBLISHED_DATE
+            except Exception:
+                props["datetime"] = PUBLISHED_DATE
         # remove temporary fields
         props.pop("_raster_bands_tmp", None)
 
@@ -1316,6 +1340,10 @@ def save_collection(
             pass
         # write back sanitized JSON
         try:
+            # Ensure top-level datetime is removed; authoritative datetime is in properties
+            jd.pop("datetime", None)
+            jd.pop("start_datetime", None)
+            jd.pop("end_datetime", None)
             p.write_text(_json.dumps(jd, indent=2), encoding="utf-8")
         except Exception:
             # non-fatal; continue sanitizing other files
@@ -1355,6 +1383,23 @@ def save_collection(
                     p.write_text(_json.dumps(jd, indent=2), encoding="utf-8")
                 except Exception:
                     pass
+
+    # Ensure every item file has properties.datetime populated (authoritative
+    # publication timestamp). This is a final, idempotent pass to make sure
+    # preserved items which lacked datetime get a canonical value.
+    for p in sorted(items_dir.glob("*.json")):
+        try:
+            jd = _json.loads(p.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        props = jd.get("properties", {}) or {}
+        if not props.get("datetime"):
+            props["datetime"] = PUBLISHED_DATE
+            jd["properties"] = props
+            try:
+                p.write_text(_json.dumps(jd, indent=2), encoding="utf-8")
+            except Exception:
+                pass
 
     # write collection.json
     coll_json = collection.to_dict()
