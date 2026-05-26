@@ -1,0 +1,83 @@
+{
+  "type": "Collection",
+  "id": "FORTRACK",
+  "stac_version": "1.1.0",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/osc/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/themes/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/contacts/v0.1.1/schema.json"
+  ],
+  "title": "FORTRACK",
+  "description": "FORTRACK is an ESA Climate Change Initiative project supporting Paris Agreement-related climate and biodiversity monitoring. It focuses on forest functional biodiversity, plant functional traits, climate extremes, and forest mortality using Earth observation and ecological datasets.",
+  "license": "proprietary",
+  "providers": [
+    {
+      "name": "ESA",
+      "roles": [
+        "producer"
+      ]
+    }
+  ],
+  "contacts": [
+    {
+      "name": "Daniel Lusk",
+      "role": "creator",
+      "email": "daniel.lusk@geosense.uni-freiburg.de",
+      "organization": "Chair of Sensor-based Geoinformatics, University of Freiburg"
+    }
+  ],
+  "osc:type": "project",
+  "osc:status": "ongoing",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180.0,
+          -90.0,
+          180.0,
+          90.0
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          null,
+          null
+        ]
+      ]
+    }
+  },
+  "links": [
+    {
+      "rel": "root",
+      "href": "../../catalog.json",
+      "type": "application/json",
+      "title": "EarthCODE Projects Catalog"
+    },
+    {
+      "rel": "parent",
+      "href": "../catalog.json",
+      "type": "application/json",
+      "title": "EarthCODE Projects Catalog"
+    },
+    {
+      "rel": "self",
+      "href": "https://esa-earthcode.github.io/open-science-catalog-metadata/projects/FORTRACK/collection.json",
+      "type": "application/json",
+      "title": "FORTRACK"
+    },
+    {
+      "rel": "via",
+      "href": "https://climate.esa.int/en/supporting-the-paris-agreement/FORTRACK/",
+      "type": "text/html",
+      "title": "FORTRACK project page (ESA Climate Office)"
+    },
+    {
+      "rel": "related",
+      "href": "../../themes/land/catalog.json",
+      "type": "application/json",
+      "title": "Land themes catalog"
+    }
+  ]
+}

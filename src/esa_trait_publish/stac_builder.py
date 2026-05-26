@@ -895,8 +895,6 @@ def save_collection(
     output_dir: Path,
     overwrite_items: bool = True,
     additional_items: Optional[List[pystac.Item]] = None,
-    write_earthcode_registry: bool = False,
-    earthcode_registry_output_dir: Optional[Path] = None,
     full_stac_catalog_url: Optional[str] = None,
 ) -> int:
     """Save the collection and contained items to `output_dir` as a self-contained catalog.
@@ -1422,68 +1420,7 @@ def save_collection(
         # Non-fatal: continue
         pass
 
-    # Optionally write a lightweight EarthCODE/Open Science Catalog registry
-    # collection JSON to a separate output directory. This file is intentionally
-    # lightweight (no item links) and includes a child link to the public
-    # hosted catalog URL when provided.
-    if write_earthcode_registry:
-        try:
-            from .config import (
-                FULL_STAC_CATALOG_URL,
-                EARTHCODE_REGISTRY_OUTPUT_DIR,
-                COLLECTION_ID,
-            )
-
-            # Determine output dir (CLI override takes precedence)
-            registry_out = earthcode_registry_output_dir or (Path(EARTHCODE_REGISTRY_OUTPUT_DIR) if EARTHCODE_REGISTRY_OUTPUT_DIR else None)
-            if registry_out:
-                registry_out = Path(registry_out)
-                registry_out.mkdir(parents=True, exist_ok=True)
-                # Build minimal registry collection
-                reg = {
-                    "type": "Collection",
-                    "id": COLLECTION_ID,
-                    "stac_version": "1.1.0",
-                    "title": collection.title,
-                    "description": collection.description,
-                    "license": collection.license,
-                    "keywords": collection.keywords or [],
-                    "providers": [p.to_dict() if hasattr(p, "to_dict") else p for p in (collection.providers or [])],
-                    "trait_map:contacts": collection.extra_fields.get("trait_map:contacts") if collection.extra_fields else None,
-                    "sci:doi": collection.extra_fields.get("sci:doi") if collection.extra_fields else None,
-                    "sci:citation": collection.extra_fields.get("sci:citation") if collection.extra_fields else None,
-                    "published": collection.extra_fields.get("published") if collection.extra_fields else None,
-                    "osc:type": collection.extra_fields.get("osc:type") if collection.extra_fields else None,
-                    "osc:status": collection.extra_fields.get("osc:status") if collection.extra_fields else None,
-                    "osc:project": collection.extra_fields.get("osc:project") if collection.extra_fields else None,
-                    "extent": collection.to_dict().get("extent"),
-                    "links": [],
-                }
-
-                # Add DOI links
-                doi = None
-                try:
-                    doi = collection.extra_fields.get("sci:doi")
-                except Exception:
-                    doi = None
-                if doi:
-                    doi_url = doi_to_url(doi) or doi
-                    reg["links"].append({"rel": "describedby", "href": doi_url, "type": "text/html"})
-                    reg["links"].append({"rel": "cite-as", "href": doi_url, "type": "text/html", "title": "Dataset DOI"})
-
-                # Add child/via links to the public hosted full catalog URL
-                public_url = full_stac_catalog_url or FULL_STAC_CATALOG_URL
-                if public_url:
-                    reg["links"].append({"rel": "child", "href": public_url, "type": "application/json", "title": "Global Plant Trait Maps full STAC catalog"})
-                    reg["links"].append({"rel": "via", "href": public_url, "type": "application/json", "title": "Access full STAC catalog"})
-
-                # write registry collection
-                reg_path = registry_out / f"{COLLECTION_ID}.json"
-                # Clean None entries
-                reg_clean = {k: v for k, v in reg.items() if v is not None}
-                reg_path.write_text(_json.dumps(reg_clean, indent=2), encoding="utf-8")
-        except Exception:
-            # Non-fatal: continue
-            pass
+    # EarthCODE registry writing has been intentionally removed. Use static
+    # files under outputs/earthcode_registry/ for any EarthCODE registry entries.
 
     return len(items_to_write)
