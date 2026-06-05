@@ -281,6 +281,10 @@ def create_item_from_raster(
     asset = pystac.Asset(href=href, media_type=media_type, roles=["data"], title=asset_title)
     item.add_asset("data", asset)
 
+    # Keep the source raster path as a temporary internal field so preview
+    # generation can happen later during serialization without affecting output.
+    item.properties.setdefault("trait_map:source_raster_path_tmp", str(raster_path.resolve()))
+
     # Defensive check: ensure the asset was added
     if "data" not in (item.assets or {}):
         raise RuntimeError(f"Item {item_id} missing required 'data' asset (href={href})")
@@ -396,6 +400,7 @@ def create_item_from_raster(
             # We'll move raster_bands into the serialized JSON later (in save_collection)
             # to avoid modifying pystac Asset internals here. Store temporarily in properties
             item.properties.setdefault("_raster_bands_tmp", raster_bands)
+            item.properties.setdefault("trait_map:source_raster_path_tmp", str(raster_path.resolve()))
     except Exception:
         pass
 
@@ -426,6 +431,137 @@ def build_asset_href(raster_path: Path, base: Optional[str] = None) -> str:
     if chosen:
         return chosen.rstrip("/") + "/" + raster_path.name
     return str(raster_path.resolve())
+
+
+def _slugify_preview_name(value: Optional[str], fallback: str) -> str:
+    """Return a filesystem-safe lowercase slug for preview asset names."""
+    text = (value or "").strip().lower()
+    text = re.sub(r"[^a-z0-9]+", "_", text)
+    text = re.sub(r"_+", "_", text).strip("_")
+    return text or fallback
+
+
+def _preview_band_name(band: Dict[str, object]) -> str:
+    """Return a stable preview name derived from band metadata."""
+    band_index = band.get("band_index") or band.get("index") or 1
+    band_name = band.get("name")
+    if isinstance(band_name, str) and band_name.strip() and not band_name.startswith("band_"):
+        return _slugify_preview_name(band_name, f"band_{band_index}")
+
+    description = str(band.get("description") or "").strip().lower()
+    if "area of applicability" in description:
+        return "area_of_applicability"
+    if "coefficient of variation" in description or " cv" in description:
+        return "coefficient_of_variation"
+    if "mean" in description:
+        return "trait_mean"
+    return f"band_{band_index}"
+
+
+def _preview_asset_title(band: Dict[str, object]) -> str:
+    """Return a human-friendly title for a preview asset."""
+    description = str(band.get("description") or "").strip()
+    if description:
+        return f"{description.rstrip('.')} preview"
+    band_name = _preview_band_name(band).replace("_", " ").strip()
+    return f"{band_name.title()} preview"
+
+
+def _preview_asset_key(band: Dict[str, object]) -> str:
+    return f"preview_{_preview_band_name(band)}"
+
+
+def _is_binary_preview_band(band: Dict[str, object]) -> bool:
+    name = _preview_band_name(band)
+    description = str(band.get("description") or "").lower()
+    return name == "area_of_applicability" or "area of applicability" in description
+
+
+def _render_preview_png(
+    raster_path: Path,
+    band: Dict[str, object],
+    preview_path: Path,
+    max_dim: int = 512,
+) -> None:
+    """Render a downsampled PNG preview for one raster band."""
+    import numpy as np
+    from PIL import Image
+    import rasterio
+    from rasterio.enums import Resampling
+
+    band_index = int(band.get("band_index") or band.get("index") or 1)
+    if band_index < 1:
+        raise ValueError(f"Invalid band index: {band_index}")
+
+    preview_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with rasterio.open(raster_path) as src:
+        if band_index > src.count:
+            raise ValueError(f"Band index {band_index} exceeds raster band count {src.count}")
+
+        scale = 1.0
+        largest = max(src.width, src.height)
+        if largest > max_dim:
+            scale = max_dim / float(largest)
+        out_width = max(1, int(round(src.width * scale)))
+        out_height = max(1, int(round(src.height * scale)))
+
+        resampling = Resampling.nearest if _is_binary_preview_band(band) else Resampling.bilinear
+        data = src.read(
+            band_index,
+            out_shape=(out_height, out_width),
+            masked=True,
+            resampling=resampling,
+        )
+
+    mask = np.ma.getmaskarray(data)
+    arr = data.astype(np.float32).filled(np.nan)
+
+    scale_factor = band.get("scale")
+    if scale_factor is not None:
+        try:
+            arr = arr * float(scale_factor)
+        except Exception:
+            pass
+
+    offset = band.get("offset")
+    if offset is not None:
+        try:
+            arr = arr + float(offset)
+        except Exception:
+            pass
+
+    valid = np.isfinite(arr) & ~mask
+    if not np.any(valid):
+        raise ValueError(f"Band {band_index} has no valid pixels after masking")
+
+    alpha = np.where(valid, 255, 0).astype(np.uint8)
+
+    if _is_binary_preview_band(band):
+        gray = np.where(valid, np.where(arr >= 0.5, 255, 0), 0).astype(np.uint8)
+    else:
+        valid_vals = arr[valid]
+        try:
+            lo, hi = np.nanpercentile(valid_vals, [2, 98])
+        except Exception:
+            lo = hi = float("nan")
+
+        if not np.isfinite(lo) or not np.isfinite(hi) or hi <= lo:
+            try:
+                lo = float(np.nanmin(valid_vals))
+                hi = float(np.nanmax(valid_vals))
+            except Exception:
+                lo = hi = float("nan")
+
+        if not np.isfinite(lo) or not np.isfinite(hi) or hi <= lo:
+            gray = np.zeros(arr.shape, dtype=np.uint8)
+        else:
+            norm = np.clip((arr - lo) / (hi - lo), 0.0, 1.0)
+            norm[~valid] = 0.0
+            gray = (norm * 255).astype(np.uint8)
+
+    rgba = np.dstack([gray, gray, gray, alpha])
+    Image.fromarray(rgba, mode="RGBA").save(preview_path)
 
 
 def build_collection_summaries(items: Iterable[pystac.Item]) -> Dict[str, List[str]]:
@@ -903,6 +1039,7 @@ def save_collection(
     overwrite_items: bool = True,
     additional_items: Optional[List[pystac.Item]] = None,
     full_stac_catalog_url: Optional[str] = None,
+    write_preview_assets: bool = False,
 ) -> int:
     """Save the collection and contained items to `output_dir` as a self-contained catalog.
 
@@ -916,6 +1053,8 @@ def save_collection(
     # Flat layout: collection.json at output_dir, items in output_dir/items/*.json
     items_dir = output_dir / "items"
     items_dir.mkdir(parents=True, exist_ok=True)
+
+    previews_dir = output_dir / "previews" if write_preview_assets else None
 
     collection_path = output_dir / "collection.json"
 
@@ -1050,6 +1189,8 @@ def save_collection(
 
         # remove any temporary raster band placeholder and normalize trait unit
         props.pop("_raster_bands_tmp", None)
+        props.pop("_source_raster_path_tmp", None)
+        source_raster_path = props.pop("trait_map:source_raster_path_tmp", None)
         if props.get("trait_unit"):
             props["trait_unit"] = _normalize_trait_unit(props.get("trait_unit"), props.get("trait_long_name"))
 
@@ -1140,6 +1281,33 @@ def save_collection(
             data_asset["raster:bands"] = clean_bands
             assets["data"] = data_asset
             item_json["assets"] = assets
+
+            if write_preview_assets and source_raster_path and previews_dir is not None:
+                preview_raster_path = Path(str(source_raster_path))
+                if preview_raster_path.exists():
+                    preview_assets = {}
+                    for band in clean_bands:
+                        preview_key = _preview_asset_key(band)
+                        preview_name = f"{item.id}_{_preview_band_name(band)}.png"
+                        preview_path = previews_dir / preview_name
+                        try:
+                            _render_preview_png(preview_raster_path, band, preview_path)
+                            preview_assets[preview_key] = {
+                                "href": f"../previews/{preview_name}",
+                                "type": "image/png",
+                                "roles": ["thumbnail", "overview"],
+                                "title": _preview_asset_title(band),
+                            }
+                        except Exception as exc:
+                            logging.getLogger(__name__).warning(
+                                "Failed to write preview for item %s band %s: %s",
+                                item.id,
+                                band.get("band_index") or band.get("name") or "unknown",
+                                exc,
+                            )
+                    if preview_assets:
+                        assets.update(preview_assets)
+                        item_json["assets"] = assets
 
         # Ensure proj:transform is present when raster metadata provided a numeric transform
         try:
@@ -1242,6 +1410,8 @@ def save_collection(
                 props["datetime"] = PUBLISHED_DATE
         # remove temporary fields
         props.pop("_raster_bands_tmp", None)
+        props.pop("_source_raster_path_tmp", None)
+        props.pop("trait_map:source_raster_path_tmp", None)
 
         # normalize trait_unit
         if props.get("trait_unit"):

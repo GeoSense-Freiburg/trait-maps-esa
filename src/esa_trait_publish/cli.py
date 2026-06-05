@@ -62,6 +62,11 @@ def build_parser() -> argparse.ArgumentParser:
 		required=False,
 		help="Public URL of the full hosted STAC catalog (used in registry child link)",
 	)
+	p.add_argument(
+		"--write-preview-assets",
+		action="store_true",
+		help="Generate PNG preview assets for each raster band and add them to item assets",
+	)
 	return p
 
 
@@ -114,6 +119,7 @@ def main(argv: Optional[list[str]] = None) -> None:
 			overwrite_items=not args.preserve_existing_items,
 			additional_items=list(new_collection.get_items()),
 			full_stac_catalog_url=args.full_stac_catalog_url,
+			write_preview_assets=args.write_preview_assets,
 		)
 	else:
 		written = save_collection(
@@ -122,6 +128,7 @@ def main(argv: Optional[list[str]] = None) -> None:
 			overwrite_items=not args.preserve_existing_items,
 			additional_items=list(new_collection.get_items()),
 			full_stac_catalog_url=args.full_stac_catalog_url,
+			write_preview_assets=args.write_preview_assets,
 		)
 
 	print(f"Saved collection to: {output_dir}")
