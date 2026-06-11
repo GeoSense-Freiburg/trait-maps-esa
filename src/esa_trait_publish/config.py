@@ -74,8 +74,21 @@ OSC_PROJECT: str = "FORTRACK"
 # Dataset publication metadata (from Zenodo record)
 DOI: str = "10.5281/zenodo.14646322"
 DOI_URL: str = "https://doi.org/10.5281/zenodo.14646322"
-SCIENTIFIC_CITATION: str = "Nature Communications, 17(1203), 2026"
+SCIENTIFIC_CITATION: str = "Lusk, D., Wolf, S., Svidzinska, D., & Kattenborn, T. (2026). Global plant trait maps based on crowdsourced biodiversity monitoring and Earth observation - 1 km - All PFTs [Data set]. In Nature Communications (1.0.0, Vol. 17, Number 1203). Zenodo. https://doi.org/10.5281/zenodo.14646322"
 PUBLISHED_DATE: str = "2026-01-30T00:00:00Z"
+PUBLISHED_DATE_END: str = "2026-01-30T23:59:59Z"
+
+# OSC missions/platforms
+OSC_MISSIONS: list[str] = [
+	"modis",
+	"in-situ-observations",
+]
+
+# Publication DOI for describedby link
+PUBLICATION_DOI: str = "https://doi.org/10.1101/2025.03.10.641660"
+
+# Documentation URL for via link
+DOCUMENTATION_URL: str = "https://planttraits.earth/"
 
 KEYWORDS = [
 	"Plant traits",

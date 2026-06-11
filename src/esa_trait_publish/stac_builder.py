@@ -1,19 +1,15 @@
-"""Small utilities to build a STAC Collection and Items from raster maps.
+"""Build STAC Collections and Items for global plant trait maps.
 
-This module wires together filename parsing, trait/stat metadata and raster
-metadata to create a minimal, valid pystac Collection and Items. The
-implementation is intentionally small and easy to extend with ESA OSC-specific
-fields later.
 """
 
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Callable
+from typing import Callable, Dict, Iterable, List, Optional
 import datetime
-
-import pystac
 import json as _json
 import logging
 import re
+
+import pystac
 
 from .config import (
     get_collection_config,
@@ -31,29 +27,13 @@ from .config import (
     DOI_URL,
     SCIENTIFIC_CITATION,
     PUBLISHED_DATE,
+    PUBLISHED_DATE_END,
     KEYWORDS,
     PROVIDERS,
-    ROOT_HREF,
+    OSC_MISSIONS,
+    PUBLICATION_DOI,
+    DOCUMENTATION_URL,
 )
-
-
-def doi_to_url(doi: str) -> Optional[str]:
-    """Normalize a DOI string to a full https://doi.org/... URL.
-
-    - If doi is empty/None return None
-    - If it already starts with http(s)://doi.org return as-is
-    - If it starts with doi.org/ prepend https://
-    - Otherwise prepend https://doi.org/
-    """
-    if not doi:
-        return None
-    s = str(doi).strip()
-    if s.lower().startswith("http://doi.org") or s.lower().startswith("https://doi.org"):
-        return s
-    if s.lower().startswith("doi.org/"):
-        return "https://" + s
-    # bare DOI like 10.5281/zenodo.14646322
-    return "https://doi.org/" + s
 
 from .filename_parser import parse_filename
 from .raster_metadata import extract_raster_metadata
@@ -64,456 +44,9 @@ from .trait_metadata import (
 )
 
 
-def infer_product_status_from_path(path: Path) -> str:
-    """Infer product status from a path string.
+LOGGER = logging.getLogger(__name__)
 
-    Looks for known status tokens in the path. Raises ValueError if unknown
-    and not allowed.
-    """
-    allowed = {"analysis-ready", "experimental", "hydraulic"}
-    s = str(path).lower()
-    for token in allowed:
-        if token in s:
-            return token
-    raise ValueError(f"Could not infer product status from path: {path}")
-
-
-def load_existing_collection(output_dir: Path) -> Optional[tuple[pystac.Collection, set]]:
-    """Load an existing collection.json and return (collection, existing_item_ids).
-
-    existing_item_ids is parsed from the collection.json links to avoid
-    resolving items (which may fail if items have datetime=None). Returns
-    None when no collection.json exists or on fatal errors.
-    """
-    coll_path = Path(output_dir) / "collection.json"
-    if not coll_path.exists():
-        return None
-    try:
-        # parse raw JSON to extract item hrefs without resolving linked items
-        raw = _json.loads(Path(coll_path).read_text(encoding="utf-8"))
-        links = raw.get("links", []) or []
-        ids = set()
-        for l in links:
-            if l.get("rel") == "item" and l.get("href"):
-                href = l.get("href")
-                name = Path(href).stem
-                ids.add(name)
-        # load collection object (pystac) for merging metadata; avoid iterating items
-        coll = pystac.Collection.from_file(str(coll_path))
-        return coll, ids
-    except Exception:
-        return None
-
-
-def merge_items_into_collection(
-    collection: pystac.Collection,
-    new_items: List[pystac.Item],
-    preserve_existing: bool = True,
-    status: Optional[str] = None,
-    existing_ids: Optional[set] = None,
-) -> pystac.Collection:
-    """Merge new_items into collection, trying to avoid ID collisions.
-
-    If an item ID already exists and preserve_existing is True, the item will
-    be skipped. If preserve_existing is False and a status is provided, the
-    function will attempt to append the status to the item id to disambiguate
-    (e.g. itemid_analysis-ready). If a disambiguated id also exists, the item
-    is skipped.
-    """
-    if existing_ids is None:
-        # fallback: do not force resolving items; try to read from collection.get_items()
-        try:
-            existing_ids = {it.id for it in collection.get_items()}
-        except Exception:
-            existing_ids = set()
-    added = 0
-    for it in new_items:
-        if it.id in existing_ids:
-            if preserve_existing:
-                print(f"Skipping existing item: {it.id}")
-                continue
-            # try to disambiguate using status suffix
-            if status:
-                alt_id = f"{it.id}_{status}"
-                if alt_id in existing_ids:
-                    print(f"Skipping item; both {it.id} and {alt_id} exist")
-                    continue
-                print(f"ID conflict for {it.id}; adding as {alt_id}")
-                it.id = alt_id
-                collection.add_item(it)
-                existing_ids.add(alt_id)
-                added += 1
-                continue
-            print(f"Skipping existing item: {it.id}")
-            continue
-        collection.add_item(it)
-        existing_ids.add(it.id)
-        added += 1
-    print(f"Added {added} new items to collection {collection.id}")
-    return collection
-
-
-def create_item_from_raster(
-    raster_path: Path,
-    trait_mapping: Dict,
-    stat_mapping: Dict,
-    base_asset_href: Optional[str] = None,
-    asset_href_resolver: Optional[Callable[[Path], str]] = None,
-) -> pystac.Item:
-    """Create a pystac.Item for a single raster file.
-
-    Args:
-        raster_path: path to a GeoTIFF/COG
-        trait_mapping: loaded trait mapping JSON (dict)
-        stat_mapping: loaded statistic mapping JSON (dict)
-
-    Returns:
-        pystac.Item: item describing the raster
-
-    Raises:
-        RuntimeError: if raster metadata cannot be read or item cannot be created
-    """
-    raster_path = Path(raster_path)
-
-    # 1. parse filename
-    parsed = parse_filename(raster_path)
-
-    # 2. extract raster metadata (may raise)
-    rast_meta = extract_raster_metadata(raster_path)
-
-    # 3. build merged metadata record
-    record = build_metadata_record(parsed, trait_mapping, stat_mapping)
-
-    # merge core scientific metadata into properties (keep it minimal)
-    properties = {
-        "trait_id": record.get("trait_id"),
-        "trait_short_name": record.get("trait_short_name"),
-        "trait_long_name": record.get("trait_long_name"),
-        "trait_unit": record.get("trait_unit"),
-    }
-
-    # Human-readable title and description to improve catalog UX
-    try:
-        properties.setdefault("title", build_item_title(record.get("trait_long_name"), record.get("stat_name")))
-        properties.setdefault("description", build_item_description(record.get("trait_long_name"), record.get("stat_name")))
-    except Exception:
-        # non-fatal; leave properties unchanged on error
-        pass
-
-    # TODO: add OSC-specific properties (extensions) here when available
-
-    # stable id derived from stem
-    item_id = parsed.get("stem") or raster_path.stem
-
-    # Use WGS84 geometry and bbox when available. If a WGS84 geometry can be
-    # created from raster bounds, set geometry and top-level bbox accordingly.
-    # Otherwise, leave geometry None and do not set a top-level bbox (STAC
-    # requires bbox/geometry to be WGS84).
-    wgs_bbox = rast_meta.get("bbox")
-    geometry = rast_meta.get("geometry")
-    dt = None
-
-    # For STAC core: set top-level bbox and datetime handling.
-    # These maps are static prediction products without an observation time
-    # axis. The publication date is product-level metadata and belongs on the
-    # Collection (see `published` in collection.extra_fields). Therefore each
-    # Item must NOT claim an observation instant or interval. Set the item's
-    # top-level `datetime` to null and do not include `start_datetime`/
-    # `end_datetime`.
-    # Only include bbox when we have a valid WGS84 geometry (to avoid
-    # including projected coordinates in top-level bbox). If geometry is
-    # present, set bbox to the WGS84 bbox; otherwise leave bbox None.
-    item_bbox = wgs_bbox if geometry is not None else None
-
-    # pystac requires start/end datetimes when datetime is None. Use an
-    # internal placeholder interval to satisfy the library, but these keys
-    # will be removed when the Item is serialized to JSON so published Items
-    # do not claim an observation interval.
-    start_end_placeholder = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
-
-    # Use publication date as item-level metadata, but store it under
-    # properties['datetime'] so the serialized Item JSON places datetime in
-    # properties (authoritative) while avoiding top-level datetime. Pystac
-    # still requires in-memory placeholders for start/end datetimes in some
-    # versions; keep them but set top-level datetime to None.
-    try:
-        published_dt = datetime.datetime.fromisoformat(PUBLISHED_DATE.replace("Z", "+00:00"))
-    except Exception:
-        published_dt = start_end_placeholder
-
-    # place publication datetime into properties (ISO string)
-    try:
-        properties.setdefault("datetime", PUBLISHED_DATE)
-    except Exception:
-        properties["datetime"] = PUBLISHED_DATE
-
-    item = pystac.Item(
-        id=item_id,
-        geometry=geometry,
-        bbox=item_bbox,
-        datetime=None,
-        # keep in-memory start/end placeholders for pystac compatibility
-        start_datetime=start_end_placeholder,
-        end_datetime=start_end_placeholder,
-        properties=properties,
-    )
-
-    # add asset
-    # Resolve asset href: allow hosted URLs for publication while preserving
-    # local absolute paths for debugging when no base is provided.
-    # Preferred: callers can provide `asset_href_resolver` (callable) or a
-    # simple `base_asset_href` string. If both are provided, resolver wins.
-    # Determine asset href: resolver wins, otherwise build from explicit
-    # base_asset_href or the configured Zenodo base URL, with a local path
-    # fallback for debugging.
-    if asset_href_resolver is not None:
-        href = asset_href_resolver(raster_path)
-    else:
-        href = build_asset_href(raster_path, base=base_asset_href)
-
-    media_type = COG_MEDIA_TYPE
-    # Build a human-readable asset title from trait/stat where possible
-    try:
-        asset_title = build_item_title_short(record.get("trait_long_name"), record.get("stat_name")) + " Raster"
-    except Exception:
-        asset_title = "Raster"
-
-    asset = pystac.Asset(href=href, media_type=media_type, roles=["data"], title=asset_title)
-    item.add_asset("data", asset)
-
-    # Defensive check: ensure the asset was added
-    if "data" not in (item.assets or {}):
-        raise RuntimeError(f"Item {item_id} missing required 'data' asset (href={href})")
-
-    # store projection fields using projection extension keys only
-    native_bbox = rast_meta.get("native_bbox")
-    if rast_meta.get("crs") is not None:
-        try:
-            epsg = int(rast_meta.get("crs"))
-            item.properties.setdefault("proj:code", f"EPSG:{epsg}")
-        except Exception:
-            item.properties.setdefault("proj:code", str(rast_meta.get("crs")))
-    if native_bbox:
-        item.properties.setdefault("proj:bbox", native_bbox)
-    # proj:transform from raster metadata (list of 6 numeric values)
-    try:
-        tr = rast_meta.get("transform")
-        if tr and isinstance(tr, (list, tuple)):
-            # ensure we have numeric values and exactly 6 elements
-            tvals = [float(x) for x in list(tr)[:6]]
-            item.properties.setdefault("proj:transform", tvals)
-    except Exception:
-        pass
-    # proj:shape and proj:transform if available
-    try:
-        if rast_meta.get("width") and rast_meta.get("height"):
-            item.properties.setdefault("proj:shape", [rast_meta.get("height"), rast_meta.get("width")])
-    except Exception:
-        pass
-
-    # keep lightweight user-facing GSD (ground sampling distance) as integer meters
-    try:
-        res = rast_meta.get("resolution")
-        if res and isinstance(res, (list, tuple)) and res[0]:
-            item.properties.setdefault("gsd", int(round(abs(res[0]))))
-    except Exception:
-        pass
-
-    # attach compact dataset tags (only selected fields). If compact_tags is
-    # not provided try the raw dataset tags extracted from the TIFF. Ensure we
-    # do not include any transform/resolution/crs/affine strings — those belong
-    # only under proj:* keys.
-    try:
-        compact = rast_meta.get("compact_tags") or rast_meta.get("tags") or {}
-        # drop any keys that are transform-like to avoid duplication
-        banned_tag_keys = {"transform", "affine", "resolution", "crs", "width", "height", "spatial_extent"}
-        compact_filtered = {k: v for k, v in compact.items() if k.lower() not in banned_tag_keys}
-        # Only include genuinely item-specific scientific metadata in dataset_tags.
-        # Do NOT include contact/provenance fields here (they belong on the Collection).
-        allowed = {"model_performance", "pfts", "source_creation_date", "usage_notes", "keywords"}#"language", "geospatial_units"
-        dataset_tags = {k: v for k, v in compact_filtered.items() if k in allowed}
-        if dataset_tags:
-            item.properties.setdefault("dataset_tags", dataset_tags)
-    except Exception:
-        pass
-
-    # Build raster:bands entries and attach them to the asset (assets.data)
-    try:
-        bands_meta = rast_meta.get("bands", [])
-        if bands_meta:
-            raster_bands = []
-            for b in bands_meta:
-                idx = b.get("band_index")
-                desc = b.get("description")
-                dlow = (desc or "").lower()
-                if "coefficient of variation" in dlow or " cv" in dlow:
-                    name = "coefficient_of_variation"
-                elif "area of applicability" in dlow:
-                    name = "area_of_applicability"
-                elif "mean" in dlow or "(mean)" in (desc or ""):
-                    name = "trait_mean"
-                else:
-                    name = f"band_{idx}"
-
-                unit = b.get("unit") or None
-                # apply unit heuristics when missing
-                if not unit:
-                    if idx == 1:
-                        unit = record.get("trait_unit") or "unitless"
-                    elif idx == 2:
-                        unit = "%"
-                    elif idx == 3:
-                        unit = "binary mask"
-                    else:
-                        unit = "unitless"
-
-                rb = {
-                    "name": name,
-                    "description": desc,
-                    "data_type": b.get("dtype"),
-                    "nodata": b.get("nodata"),
-                    "unit": unit,
-                    "sampling": "area",
-                }
-                # include scale/offset when present
-                if b.get("scale") is not None:
-                    rb["scale"] = b.get("scale")
-                if b.get("offset") is not None:
-                    rb["offset"] = b.get("offset")
-                if b.get("tags"):
-                    rb["tags"] = b.get("tags")
-                if b.get("overviews"):
-                    rb["overviews"] = b.get("overviews")
-                raster_bands.append(rb)
-
-            # attach to the asset dict (item.assets -> data)
-            try:
-                # ensure the asset dict exists on the item
-                asset_dict = item.assets.get("data")
-                # pystac.Asset -> we will ensure serialized JSON contains raster:bands
-            except Exception:
-                asset_dict = None
-            # We'll move raster_bands into the serialized JSON later (in save_collection)
-            # to avoid modifying pystac Asset internals here. Store temporarily in properties
-            item.properties.setdefault("_raster_bands_tmp", raster_bands)
-    except Exception:
-        pass
-
-    # Ensure the projection and raster extensions are declared on the Item
-    item_exts = list(item.stac_extensions or [])
-    if PROJECTION_EXTENSION not in item_exts:
-        item_exts.append(PROJECTION_EXTENSION)
-    if RASTER_EXTENSION not in item_exts:
-        item_exts.append(RASTER_EXTENSION)
-    item.stac_extensions = item_exts
-
-    return item
-
-
-def build_asset_href(raster_path: Path, base: Optional[str] = None) -> str:
-    """Return an asset href built from a base URL + filename or a local path.
-
-    Priority for base: explicit `base` argument, configured `ZENODO_FILE_BASE_URL`,
-    configured `ASSET_BASE_HREF`. If no base is available, falls back to
-    local absolute path (useful for debugging).
-    """
-    chosen = base
-    if not chosen and ZENODO_FILE_BASE_URL:
-        chosen = ZENODO_FILE_BASE_URL
-    if not chosen and ASSET_BASE_HREF and ASSET_BASE_HREF != "REPLACE_WITH_ZENODO_FILE_BASE_URL":
-        chosen = ASSET_BASE_HREF
-
-    if chosen:
-        return chosen.rstrip("/") + "/" + raster_path.name
-    return str(raster_path.resolve())
-
-
-def build_collection_summaries(items: Iterable[pystac.Item]) -> Dict[str, List[str]]:
-    """Build collection-level summaries by aggregating item properties.
-
-    Returns a dict suitable for assigning to ``collection.summaries`` where
-    each key maps to a list of unique, sorted, non-empty values.
-    """
-    fields = ["trait_short_name", "trait_unit", "stat_name", "proj:code", "trait_map:product_status"]
-    accum = {k: [] for k in fields}
-
-    for item in items:
-        props = item.properties or {}
-        for k in fields:
-            v = props.get(k)
-            if v is None:
-                continue
-            # accept lists or scalar values
-            if isinstance(v, (list, tuple)):
-                candidates = list(v)
-            else:
-                candidates = [v]
-
-            for cand in candidates:
-                if cand is None:
-                    continue
-                s = str(cand).strip()
-                if s == "":
-                    continue
-                if s not in accum[k]:
-                    accum[k].append(s)
-
-    # sort values case-insensitively to give a stable, readable ordering
-    summaries: Dict[str, List[str]] = {}
-    for k, vals in accum.items():
-        if not vals:
-            continue
-        summaries[k] = sorted(vals, key=lambda x: x.lower())
-
-    return summaries
-
-
-def build_item_assets() -> Dict[str, object]:
-    """Return a canonical item_assets mapping for the Collection.
-
-    The returned structure mirrors the STAC `item_assets` convention and is
-    also injected into collection.extra_fields under the same key for JSON
-    compatibility with tools that expect it there.
-    """
-    return {
-        "data": {
-            "type": COG_MEDIA_TYPE,
-            "roles": ["data"],
-            "title": "Cloud-Optimized GeoTIFF trait raster",
-        }
-    }
-
-
-def _format_stat_label(stat_name: Optional[str]) -> str:
-    """Return a human-friendly, title-cased label for a statistic name."""
-    if not stat_name:
-        return ""
-    mapping = {
-        "mean": "Mean",
-        "median": "Median",
-        "cv": "Coefficient of Variation",
-    }
-    s = str(stat_name).strip().lower()
-    return mapping.get(s, s.title())
-
-
-# preserve common scientific acronyms in titles/descriptions
 ACRONYMS = {"SRL", "SLA", "LMA", "LDMC", "CV"}
-
-
-def _preserve_acronyms(text: str) -> str:
-    if not text:
-        return text
-    # do not change case globally; preserve original case but fix known
-    # acronyms that may have been lower-cased earlier
-    t = text
-    for a in ACRONYMS:
-        # replace case-insensitively when acronym appears as a whole word
-        t = re.sub(rf"\b{a.lower()}\b", a, t, flags=re.IGNORECASE)
-    return t
-
-
-# mapping of common tokens to desired capitalization in descriptions/titles
 ACRONYM_MAP = {
     "gbif": "GBIF",
     "splot": "sPlot",
@@ -526,287 +59,538 @@ ACRONYM_MAP = {
     "cn": "C:N",
 }
 
+INTERNAL_ITEM_PROPERTIES = {
+    "_raster_bands_tmp",
+    "stat_id",
+    "stat_name",
+    "license",
+    "rights",
+    "nodata",
+    "dtype",
+    "resolution",
+    "width",
+    "height",
+    "transform",
+    "bbox",
+    "crs",
+    "affine",
+    "spatial_extent",
+    "start_datetime",
+    "end_datetime",
+}
 
-def _restore_acronyms_in_text(text: str) -> str:
-    """Replace known acronym tokens in text without changing sentence case.
+DATASET_TAG_DENYLIST = {
+    "transform",
+    "affine",
+    "resolution",
+    "crs",
+    "width",
+    "height",
+    "spatial_extent",
+    "author",
+    "contact",
+    "organization",
+}
 
-    This does a case-insensitive whole-word replacement for known tokens and
-    returns the adjusted string. It avoids title-casing the entire sentence.
-    """
+DATASET_TAG_ALLOWLIST = {
+    "model_performance",
+    "pfts",
+    "source_creation_date",
+    "usage_notes",
+    "keywords",
+}
+
+
+def doi_to_url(doi: str) -> Optional[str]:
+    """Normalize a DOI string to a full ``https://doi.org/...`` URL."""
+    if not doi:
+        return None
+
+    value = str(doi).strip()
+    lower = value.lower()
+
+    if lower.startswith(("http://doi.org", "https://doi.org")):
+        return value
+    if lower.startswith("doi.org/"):
+        return f"https://{value}"
+    return f"https://doi.org/{value}"
+
+
+def _parse_datetime(value: str) -> datetime.datetime:
+    """Parse an ISO datetime string that may use a trailing ``Z``."""
+    return datetime.datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+def _json_write(path: Path, payload: dict) -> None:
+    """Write JSON consistently."""
+    path.write_text(_json.dumps(payload, indent=2), encoding="utf-8")
+
+
+def _ensure_extension(stac_object: pystac.STACObject, extension_url: str) -> None:
+    extensions = list(stac_object.stac_extensions or [])
+    if extension_url not in extensions:
+        extensions.append(extension_url)
+    stac_object.stac_extensions = extensions
+
+
+def _preserve_acronyms(text: str) -> str:
     if not text:
         return text
-    out = text
-    for k, v in ACRONYM_MAP.items():
-        out = re.sub(rf"\b{re.escape(k)}\b", v, out, flags=re.IGNORECASE)
-    return out
+
+    output = text
+    for acronym in ACRONYMS:
+        output = re.sub(rf"\b{acronym.lower()}\b", acronym, output, flags=re.IGNORECASE)
+    return output
 
 
-def _parse_dataset_tags(raw: dict) -> Optional[dict]:
-    """Parse raw TIFF dataset tags into a compact dataset_tags object.
+def _restore_acronyms_in_text(text: str) -> str:
+    """Replace known acronym tokens without changing sentence case."""
+    if not text:
+        return text
 
-    Returns None when no useful tags are found.
-    """
-    if not raw or not isinstance(raw, dict):
-        return None
-    out = {}
-    # keywords: parse comma separated string into list (lowercase)
-    kw = raw.get("keywords") or raw.get("Keywords") or raw.get("KEYWORDS")
-    if isinstance(kw, str) and kw.strip():
-        parts = [k.strip().lower() for k in kw.split(",") if k.strip()]
-        if parts:
-            out["keywords"] = parts
+    output = text
+    for token, replacement in ACRONYM_MAP.items():
+        output = re.sub(rf"\b{re.escape(token)}\b", replacement, output, flags=re.IGNORECASE)
+    return output
 
-    # PFTs
-    pfts = raw.get("PFTs") or raw.get("pfts") or raw.get("pft")
-    if isinstance(pfts, str) and pfts.strip():
-        out["pfts"] = pfts
 
-    # source creation date
-    cd = raw.get("creation_date") or raw.get("creationDate") or raw.get("CreationDate")
-    if isinstance(cd, str) and cd.strip():
-        out["source_creation_date"] = cd
+def _format_stat_label(stat_name: Optional[str]) -> str:
+    if not stat_name:
+        return ""
 
-    # model_performance: if it's a JSON string, parse it
-    mp = raw.get("model_performance") or raw.get("modelPerformance")
-    if isinstance(mp, str) and mp.strip():
-        try:
-            out_mp = _json.loads(mp)
-            out["model_performance"] = out_mp
-        except Exception:
-            # keep as string if not JSON
-            out["model_performance"] = mp
-    elif isinstance(mp, dict):
-        out["model_performance"] = mp
-
-    # usage notes
-    un = raw.get("usage_notes") or raw.get("usageNotes") or raw.get("usage")
-    if isinstance(un, str) and un.strip():
-        out["usage_notes"] = un
-
-    # additional helpful fields
-    lang = raw.get("language") or raw.get("Language")
-    if isinstance(lang, str) and lang.strip():
-        out["language"] = lang
-
-    # Note: do NOT include contact/author/organization in parsed dataset_tags.
-    # These provenance fields are collection-level metadata and should not be
-    # duplicated in every Item. Any such keys will be stripped later during
-    # sanitization to ensure the collection is authoritative.
-
-    geounits = raw.get("geospatial_units") or raw.get("geospatialUnits")
-    if isinstance(geounits, str) and geounits.strip():
-        out["geospatial_units"] = geounits
-
-    return out if out else None
-
+    mapping = {
+        "mean": "Mean",
+        "median": "Median",
+        "cv": "Coefficient of Variation",
+    }
+    value = str(stat_name).strip().lower()
+    return mapping.get(value, value.title())
 
 
 def _normalize_trait_unit(trait_unit: Optional[str], trait_long_name: Optional[str]) -> str:
-    """Normalize placeholder units like '-' into machine-readable units.
+    """Normalize empty placeholder trait units."""
+    unit = str(trait_unit or "").strip()
 
-    Heuristic:
-    - if trait_unit is '-' or empty: prefer 'count' when trait name suggests a number/count,
-      otherwise 'unitless'.
-    - otherwise return trait_unit as-is.
-    """
-    if trait_unit is None:
-        trait_unit = ""
-    ut = str(trait_unit).strip()
-    if ut == "-" or ut == "":
-        name = (trait_long_name or "").lower()
-        if any(k in name for k in ("number", "count", "density", "per ", "per/", "per-")):
-            return "count"
-        return "unitless"
-    return ut
+    if unit and unit != "-":
+        return unit
+
+    trait_name = (trait_long_name or "").lower()
+    if any(token in trait_name for token in ("number", "count", "density", "per ", "per/", "per-")):
+        return "count"
+    return "unitless"
 
 
 def build_item_title(trait_long_name: Optional[str], stat_name: Optional[str]) -> str:
-    """Build a readable item title.
-
-    Format: "{Trait Long Name} {StatLabel} — Global 1 km Plant Trait Map"
-    Prefer trait_long_name; fall back to a short name if missing. Title-case the
-    final value for readability.
-    """
     trait = (trait_long_name or "Trait").strip()
     stat_label = _format_stat_label(stat_name)
-    pieces = [trait]
-    if stat_label:
-        pieces.append(stat_label)
-    main = _preserve_acronyms(" ".join(pieces))
-    return f"{main} — Global 1 km Plant Trait Map"
-
-
-def build_item_description(trait_long_name: Optional[str], stat_name: Optional[str]) -> str:
-    """Build a readable item description.
-
-    Example:
-      "Global 1 km map of community-weighted mean leaf length derived from GBIF, sPlot, TRY, and Earth observation predictors."
-
-    The description always mentions global extent, 1 km resolution, community-weighting
-    and the main source datasets. The wording adapts slightly for CV vs. mean/median.
-    """
-    trait = (trait_long_name or "trait").strip()
-    # lower-case the trait for fluent sentence grammar
-    trait_lc = trait.lower()
-
-    s = (stat_name or "").strip().lower()
-    if s == "cv":
-        stat_phrase = "coefficient of variation of"
-    elif s in ("mean", "median"):
-        stat_phrase = s
-    elif s:
-        stat_phrase = s
-    else:
-        stat_phrase = "statistic"
-
-    # use community-weighted phrasing for central tendency statistics
-    if s in ("mean", "median"):
-        cw_phrase = "community-weighted"
-    else:
-        cw_phrase = "community-weighted"
-
-    description = (
-        f"Global 1 km map of {cw_phrase} {stat_phrase} {trait_lc} "
-        "derived from GBIF, sPlot, TRY, and Earth observation predictors."
-    )
-    # sentence case: lowercase except first letter, but preserve acronyms
-    desc = description[0].upper() + description[1:]
-    # restore known acronym capitalization
-    desc = _restore_acronyms_in_text(desc)
-    desc = _preserve_acronyms(desc)
-    return desc
+    pieces = [trait, stat_label] if stat_label else [trait]
+    return f"{_preserve_acronyms(' '.join(pieces))} — Global 1 km Plant Trait Map"
 
 
 def build_item_title_short(trait_long_name: Optional[str], stat_name: Optional[str]) -> str:
-    """Build a short human-readable title used for asset titles.
-
-    Example: "Leaf Length Mean"
-    """
     trait = (trait_long_name or "Trait").strip()
     stat_label = _format_stat_label(stat_name)
-    pieces = [trait]
-    if stat_label:
-        pieces.append(stat_label)
+    pieces = [trait, stat_label] if stat_label else [trait]
     return _preserve_acronyms(" ".join(pieces))
 
 
+def build_item_description(trait_long_name: Optional[str], stat_name: Optional[str]) -> str:
+    trait = (trait_long_name or "trait").strip().lower()
+    stat = (stat_name or "").strip().lower()
+
+    if stat == "cv":
+        stat_phrase = "coefficient of variation of"
+    elif stat in {"mean", "median"}:
+        stat_phrase = stat
+    elif stat:
+        stat_phrase = stat
+    else:
+        stat_phrase = "statistic"
+
+    description = (
+        f"Global 1 km map of community-weighted {stat_phrase} {trait} "
+        "derived from GBIF, sPlot, TRY, and Earth observation predictors."
+    )
+    description = description[0].upper() + description[1:]
+    return _preserve_acronyms(_restore_acronyms_in_text(description))
+
+
+def infer_product_status_from_path(path: Path) -> str:
+    """Infer product status from a path string."""
+    allowed = {"analysis-ready", "experimental", "hydraulic"}
+    path_text = str(path).lower()
+
+    for token in allowed:
+        if token in path_text:
+            return token
+
+    raise ValueError(f"Could not infer product status from path: {path}")
+
+
+def build_asset_href(raster_path: Path, base: Optional[str] = None) -> str:
+    """Return asset href built from a base URL and filename, or local path."""
+    chosen_base = base or ZENODO_FILE_BASE_URL
+
+    if not chosen_base and ASSET_BASE_HREF and ASSET_BASE_HREF != "REPLACE_WITH_ZENODO_FILE_BASE_URL":
+        chosen_base = ASSET_BASE_HREF
+
+    if chosen_base:
+        return f"{chosen_base.rstrip('/')}/{raster_path.name}"
+
+    return str(raster_path.resolve())
+
+
+def build_item_assets() -> Dict[str, object]:
+    """Return the canonical collection-level ``item_assets`` mapping."""
+    return {
+        "data": {
+            "type": COG_MEDIA_TYPE,
+            "roles": ["data"],
+            "title": "Cloud-Optimized GeoTIFF trait raster",
+        }
+    }
+
+
+def build_collection_summaries(items: Iterable[pystac.Item]) -> Dict[str, List[str]]:
+    """Aggregate selected item properties into collection summaries."""
+    fields = ["trait_short_name", "trait_unit", "stat_name", "proj:code", "trait_map:product_status"]
+    values: Dict[str, List[str]] = {field: [] for field in fields}
+
+    for item in items:
+        props = item.properties or {}
+        for field in fields:
+            raw_value = props.get(field)
+            if raw_value is None:
+                continue
+
+            candidates = raw_value if isinstance(raw_value, (list, tuple)) else [raw_value]
+            for candidate in candidates:
+                if candidate is None:
+                    continue
+                value = str(candidate).strip()
+                if value and value not in values[field]:
+                    values[field].append(value)
+
+    return {
+        field: sorted(field_values, key=lambda x: x.lower())
+        for field, field_values in values.items()
+        if field_values
+    }
+
+
+def _merge_summaries(existing: Dict[str, list], new: Dict[str, list]) -> Dict[str, list]:
+    merged: Dict[str, list] = {}
+
+    for key in sorted(set(existing) | set(new)):
+        values = list(dict.fromkeys([*(existing.get(key) or []), *(new.get(key) or [])]))
+        if values:
+            merged[key] = sorted(values, key=lambda x: str(x).lower())
+
+    return merged
+
+
+def _parse_dataset_tags(raw: dict) -> Optional[dict]:
+    """Parse raw TIFF dataset tags into compact item-level dataset tags."""
+    if not raw or not isinstance(raw, dict):
+        return None
+
+    cleaned = {k: v for k, v in raw.items() if k not in DATASET_TAG_DENYLIST}
+    output = {}
+
+    keywords = cleaned.get("keywords") or cleaned.get("Keywords") or cleaned.get("KEYWORDS")
+    if isinstance(keywords, str) and keywords.strip():
+        output["keywords"] = [item.strip().lower() for item in keywords.split(",") if item.strip()]
+    elif isinstance(keywords, list):
+        output["keywords"] = keywords
+
+    pfts = cleaned.get("PFTs") or cleaned.get("pfts") or cleaned.get("pft")
+    if isinstance(pfts, str) and pfts.strip():
+        output["pfts"] = pfts
+
+    creation_date = cleaned.get("creation_date") or cleaned.get("creationDate") or cleaned.get("CreationDate")
+    if isinstance(creation_date, str) and creation_date.strip():
+        output["source_creation_date"] = creation_date
+
+    model_performance = cleaned.get("model_performance") or cleaned.get("modelPerformance")
+    if isinstance(model_performance, str) and model_performance.strip():
+        try:
+            output["model_performance"] = _json.loads(model_performance)
+        except Exception:
+            output["model_performance"] = model_performance
+    elif isinstance(model_performance, dict):
+        output["model_performance"] = model_performance
+
+    usage_notes = cleaned.get("usage_notes") or cleaned.get("usageNotes") or cleaned.get("usage")
+    if isinstance(usage_notes, str) and usage_notes.strip():
+        output["usage_notes"] = usage_notes
+
+    # Keep only explicitly allowed compact tags.
+    output = {k: v for k, v in output.items() if k in DATASET_TAG_ALLOWLIST and v not in (None, "", [])}
+    return output or None
+
+
+def _band_name(band_index: Optional[int], description: Optional[str]) -> str:
+    description_lower = (description or "").lower()
+
+    if "coefficient of variation" in description_lower or " cv" in description_lower:
+        return "coefficient_of_variation"
+    if "area of applicability" in description_lower:
+        return "area_of_applicability"
+    if "mean" in description_lower or "(mean)" in (description or ""):
+        return "trait_mean"
+    return f"band_{band_index}"
+
+
+def _band_unit(band: dict, record: dict) -> str:
+    unit = band.get("unit")
+    if unit:
+        return unit
+
+    band_index = band.get("band_index")
+    if band_index == 1:
+        return record.get("trait_unit") or "unitless"
+    if band_index == 2:
+        return "%"
+    if band_index == 3:
+        return "binary mask"
+    return "unitless"
+
+
+def _build_raster_bands(rast_meta: dict, record: dict) -> list:
+    bands = []
+
+    for band in rast_meta.get("bands", []) or []:
+        entry = {
+            "name": _band_name(band.get("band_index"), band.get("description")),
+            "description": band.get("description"),
+            "data_type": band.get("dtype"),
+            "nodata": band.get("nodata"),
+            "unit": _band_unit(band, record),
+            "sampling": "area",
+        }
+
+        for key in ("scale", "offset", "overviews"):
+            if band.get(key) is not None:
+                entry[key] = band.get(key)
+
+        tags = band.get("tags")
+        if isinstance(tags, dict):
+            tags = {k: v for k, v in tags.items() if not k.upper().startswith("STATISTICS_")}
+            if tags:
+                entry["tags"] = tags
+
+        bands.append({k: v for k, v in entry.items() if v is not None})
+
+    return bands
+
+
+def _add_projection_properties(item: pystac.Item, rast_meta: dict) -> None:
+    if rast_meta.get("crs") is not None:
+        try:
+            item.properties.setdefault("proj:code", f"EPSG:{int(rast_meta.get('crs'))}")
+        except Exception:
+            item.properties.setdefault("proj:code", str(rast_meta.get("crs")))
+
+    if rast_meta.get("native_bbox"):
+        item.properties.setdefault("proj:bbox", rast_meta.get("native_bbox"))
+
+    transform = rast_meta.get("transform")
+    if isinstance(transform, (list, tuple)):
+        try:
+            item.properties.setdefault("proj:transform", [float(x) for x in list(transform)[:6]])
+        except Exception:
+            pass
+
+    if rast_meta.get("width") and rast_meta.get("height"):
+        item.properties.setdefault("proj:shape", [rast_meta.get("height"), rast_meta.get("width")])
+
+    resolution = rast_meta.get("resolution")
+    if resolution and isinstance(resolution, (list, tuple)) and resolution[0]:
+        try:
+            item.properties.setdefault("gsd", int(round(abs(resolution[0]))))
+        except Exception:
+            pass
+
+
+def _add_dataset_tags(item: pystac.Item, rast_meta: dict) -> None:
+    raw_tags = rast_meta.get("compact_tags") or rast_meta.get("tags") or {}
+    dataset_tags = _parse_dataset_tags(raw_tags)
+
+    if dataset_tags:
+        item.properties.setdefault("dataset_tags", dataset_tags)
+
+
 def apply_osc_collection_fields(collection: pystac.Collection) -> pystac.Collection:
-    """Apply OSC metadata to a Collection.
+    """Apply OSC extension and required OSC collection fields."""
+    extra_fields = collection.extra_fields or {}
+    extra_fields.update(
+        {
+            "osc:type": OSC_TYPE,
+            "osc:status": OSC_STATUS,
+            "osc:project": OSC_PROJECT,
+        }
+    )
+    collection.extra_fields = extra_fields
+    _ensure_extension(collection, OSC_EXTENSION)
+    return collection
 
-    This sets the OSC extension URL on `stac_extensions` and writes the
-    minimal OSC extra fields required by ESA: `osc:type`, `osc:status` and
-    `osc:project` (string).
-    """
-    # Ensure extra_fields exists and is a dict
-    ef = collection.extra_fields or {}
 
-    # Required OSC fields per user request
-    ef["osc:type"] = OSC_TYPE
-    ef["osc:status"] = OSC_STATUS
-    ef["osc:project"] = OSC_PROJECT
+def _collection_reference_links() -> List[pystac.Link]:
+    """Return authoritative non-navigation collection links."""
+    return [
+        pystac.Link("self", "./collection.json", media_type="application/json"),
+        pystac.Link(
+            "describedby",
+            PUBLICATION_DOI,
+            media_type="text/html",
+            title="Associated Publication",
+        ),
+        pystac.Link(
+            "cite-as",
+            doi_to_url(DOI_URL) or DOI_URL,
+            media_type="text/html",
+            title="Dataset DOI",
+        ),
+        pystac.Link(
+            "via",
+            DOCUMENTATION_URL,
+            media_type="text/html",
+            title="Dataset Documentation",
+        ),
+    ]
 
-    # attach back
-    collection.extra_fields = ef
 
-    # register the OSC extension URL (official schema) for discoverability
-    stac_exts = list(collection.stac_extensions or [])
-    if OSC_EXTENSION not in stac_exts:
-        stac_exts.append(OSC_EXTENSION)
-    # Do not add scientific extension here; create_collection will opt-in when
-    # constructing the final collection object so we can keep extension
-    # placement explicit and isolated.
-    collection.stac_extensions = stac_exts
+def create_collection() -> pystac.Collection:
+    """Create the authoritative base STAC Collection."""
+    cfg = get_collection_config()
+
+    spatial = pystac.SpatialExtent([cfg.get("spatial_extent")])
+    temporal = pystac.TemporalExtent(
+        [[_parse_datetime(PUBLISHED_DATE), _parse_datetime(PUBLISHED_DATE_END)]]
+    )
+    extent = pystac.Extent(spatial=spatial, temporal=temporal)
+
+    collection = pystac.Collection(
+        id=cfg.get("id"),
+        description=cfg.get("description"),
+        extent=extent,
+        title=cfg.get("title"),
+        license=cfg.get("license"),
+    )
+
+    apply_osc_collection_fields(collection)
+    _ensure_extension(collection, SCIENTIFIC_EXTENSION)
+
+    collection.keywords = list(KEYWORDS)
+    collection.providers = [
+        pystac.Provider(name=provider.get("name"), roles=provider.get("roles"))
+        for provider in PROVIDERS
+    ]
+
+    collection.extra_fields = {
+        **(collection.extra_fields or {}),
+        "osc:missions": list(OSC_MISSIONS),
+        "sci:doi": DOI,
+        "sci:citation": SCIENTIFIC_CITATION,
+        "published": PUBLISHED_DATE,
+        "trait_map:contacts": [
+            {
+                "name": "Daniel Lusk",
+                "role": "creator",
+                "email": "daniel.lusk@geosense.uni-freiburg.de",
+                "organization": "Chair of Sensor-based Geoinformatics, University of Freiburg",
+            }
+        ],
+    }
+
+    collection.links = []
+    for link in _collection_reference_links():
+        collection.add_link(link)
 
     return collection
 
 
-def create_collection() -> pystac.Collection:
-    """Create a base STAC Collection for the global plant trait maps.
+def create_item_from_raster(
+    raster_path: Path,
+    trait_mapping: Dict,
+    stat_mapping: Dict,
+    base_asset_href: Optional[str] = None,
+    asset_href_resolver: Optional[Callable[[Path], str]] = None,
+) -> pystac.Item:
+    """Create a STAC Item for a single raster file."""
+    raster_path = Path(raster_path)
 
-    The collection uses a placeholder license and includes a description with
-    dataset context and DOI. Update license and links from authoritative
-    Zenodo/metadata when available.
-    """
-    cfg = get_collection_config()
-    spatial = pystac.SpatialExtent([cfg.get("spatial_extent")])
-    temporal = pystac.TemporalExtent([[None, None]])
-    extent = pystac.Extent(spatial=spatial, temporal=temporal)
-    description = cfg.get("description")
+    parsed = parse_filename(raster_path)
+    rast_meta = extract_raster_metadata(raster_path)
+    record = build_metadata_record(parsed, trait_mapping, stat_mapping)
 
-    coll = pystac.Collection(
-        id=cfg.get("id"),
-        description=description,
-        extent=extent,
-        title=cfg.get("title"),
-        license=cfg.get("license"),  # TODO: replace with authoritative Zenodo license metadata
+    trait_unit = _normalize_trait_unit(record.get("trait_unit"), record.get("trait_long_name"))
+    properties = {
+        "datetime": PUBLISHED_DATE,
+        "trait_id": record.get("trait_id"),
+        "trait_short_name": record.get("trait_short_name"),
+        "trait_long_name": record.get("trait_long_name"),
+        "trait_unit": trait_unit,
+        "title": build_item_title(record.get("trait_long_name"), record.get("stat_name")),
+        "description": build_item_description(record.get("trait_long_name"), record.get("stat_name")),
+    }
+
+    geometry = rast_meta.get("geometry")
+    item_bbox = rast_meta.get("bbox") if geometry is not None else None
+
+    # PySTAC requires start/end when datetime=None. These are removed at JSON
+    # serialization so the public item keeps properties.datetime only.
+    placeholder_datetime = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
+
+    item = pystac.Item(
+        id=parsed.get("stem") or raster_path.stem,
+        geometry=geometry,
+        bbox=item_bbox,
+        datetime=None,
+        start_datetime=placeholder_datetime,
+        end_datetime=placeholder_datetime,
+        properties=properties,
     )
 
-    # Apply OSC placeholder fields to make the collection scaffold-ready for
-    # ESA Open Science Catalog ingestion. This is intentionally minimal and
-    # can be expanded when final OSC requirements are determined.
-    coll = apply_osc_collection_fields(coll)
+    href = asset_href_resolver(raster_path) if asset_href_resolver else build_asset_href(raster_path, base_asset_href)
+    asset_title = f"{build_item_title_short(record.get('trait_long_name'), record.get('stat_name'))} Raster"
+    item.add_asset("data", pystac.Asset(href=href, media_type=COG_MEDIA_TYPE, roles=["data"], title=asset_title))
 
-    # Add scientific extension and collection-level scientific metadata.
-    sc_exts = list(coll.stac_extensions or [])
-    if SCIENTIFIC_EXTENSION not in sc_exts:
-        sc_exts.append(SCIENTIFIC_EXTENSION)
-    coll.stac_extensions = sc_exts
+    if "data" not in (item.assets or {}):
+        raise RuntimeError(f"Item {item.id} missing required 'data' asset (href={href})")
 
-    # Keywords
-    coll.keywords = list(KEYWORDS)
+    _add_projection_properties(item, rast_meta)
+    _add_dataset_tags(item, rast_meta)
 
-    # Providers: convert simple dicts into pystac Provider objects if possible
-    providers = []
-    for p in PROVIDERS:
-        try:
-            provider = pystac.Provider(name=p.get("name"), roles=p.get("roles"))
-            providers.append(provider)
-        except Exception:
-            # Fall back to raw dict; pystac will accept list of dicts in some versions
-            providers.append(p)
-    coll.providers = providers
+    raster_bands = _build_raster_bands(rast_meta, record)
+    if raster_bands:
+        item.properties["_raster_bands_tmp"] = raster_bands
 
-    # Scientific citation metadata (extension-friendly keys)
-    ef = coll.extra_fields or {}
-    ef.setdefault("sci:doi", DOI)
-    ef.setdefault("sci:citation", SCIENTIFIC_CITATION)
-    # publication date
-    ef.setdefault("published", PUBLISHED_DATE)
-    coll.extra_fields = ef
+    _ensure_extension(item, PROJECTION_EXTENSION)
+    _ensure_extension(item, RASTER_EXTENSION)
 
-    # Add authoritative contact/provenance metadata at the collection level.
-    # Place under a namespaced custom field to avoid introducing unsupported
-    # top-level STAC fields. Tools can still discover this metadata easily.
-    contacts = [
-        {
-            "name": "Daniel Lusk",
-            "role": "creator",
-            "email": "daniel.lusk@geosense.uni-freiburg.de",
-            "organization": "Chair of Sensor-based Geoinformatics, University of Freiburg",
-        }
-    ]
-    # Attach under a namespaced key to avoid STAC validation issues with unknown top-level keys
-    ef = coll.extra_fields or {}
-    ef.setdefault("trait_map:contacts", contacts)
-    coll.extra_fields = ef
+    return item
 
-    # add placeholder links (use Link constructor for broad pystac compatibility)
-    # Do not add a 'root' link pointing to project root; it may not resolve
-    # to a STAC object when catalogs are normalized. Add only self and
-    # describedby links.
-    # Use a relative self link and add DOI links (describedby and cite-as)
-    # Add self and describedby links. We do not attach the `root` link as a
-    # pystac.Link here because some pystac versions attempt to resolve root
-    # link targets when converting to dict. Instead the root link is injected
-    # during JSON sanitization in `save_collection` to keep serialized output
-    # free of absolute filesystem paths.
-    coll.add_link(pystac.Link("self", "./collection.json", media_type="application/json"))
-    # Normalize DOI URL when present
-    doi_norm = doi_to_url(DOI_URL) or DOI_URL
-    coll.add_link(pystac.Link("describedby", doi_norm, media_type="text/html", title="Zenodo record"))
-    coll.add_link(pystac.Link("cite-as", doi_norm, media_type="text/html", title="Dataset DOI"))
 
-    return coll
+def _is_valid_raster_file(path: Path) -> bool:
+    name = path.name
+
+    if name.startswith(("._", ".")) or not path.is_file():
+        return False
+
+    return name.lower().endswith((".tif", ".tiff"))
+
+
+def _iter_raster_files(maps_dir: Path) -> List[Path]:
+    files = []
+
+    for path in Path(maps_dir).iterdir():
+        if _is_valid_raster_file(path):
+            files.append(path)
+        else:
+            LOGGER.debug("Skipping non-raster or sidecar file: %s", path.name)
+
+    return sorted(files, key=lambda path: path.name.lower())
 
 
 def build_collection_from_directory(
@@ -816,77 +600,15 @@ def build_collection_from_directory(
     base_asset_href: Optional[str] = None,
     asset_href_resolver: Optional[Callable[[Path], str]] = None,
 ) -> pystac.Collection:
-    """Build a STAC Collection populated from rasters in `maps_dir`.
-
-    Args:
-        maps_dir: directory containing raster products (*.tif, *.tiff)
-        trait_metadata_path: path to trait_mapping.json
-        stat_metadata_path: path to trait_stat_mapping.json
-
-    Returns:
-        populated pystac.Collection
-    """
-    maps_dir = Path(maps_dir)
+    """Build a collection populated from rasters in ``maps_dir``."""
     trait_map = load_trait_metadata(Path(trait_metadata_path))
     stat_map = load_stat_metadata(Path(stat_metadata_path))
 
     collection = create_collection()
 
-    # discover raster files
-    files: List[Path] = []
-    logger = logging.getLogger(__name__)
-
-    def is_valid_raster_file(path: Path) -> bool:
-        """Return True for real raster files we should process.
-
-        Rules:
-        - only accept names that end exactly with .tif or .tiff (case-insensitive)
-        - reject files beginning with '._' (resource forks) or '.' (hidden)
-        - require the path to be a regular file
-        """
-        name = path.name
-        # Exclude resource-fork and hidden files
-        if name.startswith("._"):
-            return False
-        if name.startswith("."):
-            return False
-
-        # Must be a regular file
-        if not path.is_file():
-            return False
-
-        nl = name.lower()
-        # Only accept exact raster filename endings
-        if nl.endswith(".tif") or nl.endswith(".tiff"):
-            return True
-        return False
-
-    # Iterate directory entries and filter strictly for valid raster files.
-    skipped = []
-    try:
-        for p in maps_dir.iterdir():
-            try:
-                if is_valid_raster_file(p):
-                    files.append(p)
-                else:
-                    # Debug log skipped files; do not treat as an error.
-                    logger.debug("Skipping non-raster or sidecar file: %s", p.name)
-                    skipped.append(p.name)
-            except Exception:
-                # Be defensive: skip problematic entries but log at debug level
-                logger.debug("Error inspecting file %s; skipping", str(p), exc_info=True)
-                skipped.append(str(p))
-    except Exception:
-        # If the directory cannot be read, propagate the error so callers see it
-        raise
-
-    # Sort deterministically by filename (case-insensitive)
-    files = sorted(files, key=lambda p: p.name.lower())
-
-    for f in files:
-        # be explicit about errors when reading individual rasters
+    for raster_path in _iter_raster_files(Path(maps_dir)):
         item = create_item_from_raster(
-            f,
+            raster_path,
             trait_map,
             stat_map,
             base_asset_href=base_asset_href,
@@ -897,553 +619,297 @@ def build_collection_from_directory(
     return collection
 
 
-def save_collection(
+def load_existing_collection(output_dir: Path) -> Optional[tuple[pystac.Collection, set]]:
+    """Load an existing collection and parse existing item IDs from item links."""
+    collection_path = Path(output_dir) / "collection.json"
+
+    if not collection_path.exists():
+        return None
+
+    try:
+        raw = _json.loads(collection_path.read_text(encoding="utf-8"))
+        item_ids = {
+            Path(link["href"]).stem
+            for link in raw.get("links", []) or []
+            if link.get("rel") == "item" and link.get("href")
+        }
+        collection = pystac.Collection.from_file(str(collection_path))
+        return collection, item_ids
+    except Exception:
+        return None
+
+
+def merge_items_into_collection(
     collection: pystac.Collection,
-    output_dir: Path,
-    overwrite_items: bool = True,
-    additional_items: Optional[List[pystac.Item]] = None,
-    full_stac_catalog_url: Optional[str] = None,
-) -> int:
-    """Save the collection and contained items to `output_dir` as a self-contained catalog.
+    new_items: List[pystac.Item],
+    preserve_existing: bool = True,
+    status: Optional[str] = None,
+    existing_ids: Optional[set] = None,
+) -> pystac.Collection:
+    """Merge new items into a collection while avoiding ID collisions."""
+    if existing_ids is None:
+        try:
+            existing_ids = {item.id for item in collection.get_items()}
+        except Exception:
+            existing_ids = set()
 
-    Args:
-        collection: collection to save
-        output_dir: directory to write the collection to
-    """
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
+    added = 0
 
-    # Flat layout: collection.json at output_dir, items in output_dir/items/*.json
-    items_dir = output_dir / "items"
-    items_dir.mkdir(parents=True, exist_ok=True)
+    for item in new_items:
+        item_id = item.id
 
-    collection_path = output_dir / "collection.json"
+        if item_id in existing_ids:
+            if preserve_existing:
+                print(f"Skipping existing item: {item_id}")
+                continue
 
-    # Determine items to write. If additional_items is provided (e.g. when
-    # extending an existing collection), use that list to avoid resolving
-    # existing collection item links which can cause pystac to attempt to
-    # load and validate linked item files. Otherwise, capture items from the
-    # in-memory collection (fresh build).
-    if additional_items is not None:
-        items_to_write = list(additional_items)
+            if status:
+                alternative_id = f"{item_id}_{status}"
+                if alternative_id in existing_ids:
+                    print(f"Skipping item; both {item_id} and {alternative_id} exist")
+                    continue
+
+                print(f"ID conflict for {item_id}; adding as {alternative_id}")
+                item.id = alternative_id
+                item_id = alternative_id
+            else:
+                print(f"Skipping existing item: {item_id}")
+                continue
+
+        collection.add_item(item)
+        existing_ids.add(item_id)
+        added += 1
+
+    print(f"Added {added} new items to collection {collection.id}")
+    return collection
+
+
+def _clean_raster_bands(bands: Optional[list], trait_unit: Optional[str]) -> Optional[list]:
+    if not isinstance(bands, list):
+        return None
+
+    cleaned = []
+
+    for band in bands:
+        if not isinstance(band, dict):
+            continue
+
+        entry = dict(band)
+
+        tags = entry.get("tags")
+        if isinstance(tags, dict):
+            tags = {k: v for k, v in tags.items() if not k.upper().startswith("STATISTICS_")}
+            if tags:
+                entry["tags"] = tags
+            else:
+                entry.pop("tags", None)
+        else:
+            entry.pop("tags", None)
+
+        if entry.get("unit") == "-":
+            if trait_unit:
+                entry["unit"] = trait_unit
+            else:
+                entry.pop("unit", None)
+
+        if trait_unit and not entry.get("unit"):
+            entry["unit"] = trait_unit
+
+        cleaned.append(entry)
+
+    return cleaned or None
+
+
+def _extract_raster_bands_from_properties(raw_props: dict) -> Optional[list]:
+    if isinstance(raw_props.get("_raster_bands_tmp"), list):
+        return raw_props.get("_raster_bands_tmp")
+    if isinstance(raw_props.get("raster:bands"), list):
+        return raw_props.get("raster:bands")
+    return None
+
+
+def _sanitize_item_json(item_json: dict, collection_title: Optional[str]) -> dict:
+    """Return a clean serialized STAC Item JSON dictionary."""
+    raw_props = item_json.get("properties", {}) or {}
+    props = dict(raw_props)
+
+    for key in INTERNAL_ITEM_PROPERTIES:
+        props.pop(key, None)
+
+    props["datetime"] = props.get("datetime") or PUBLISHED_DATE
+
+    if props.get("trait_unit"):
+        props["trait_unit"] = _normalize_trait_unit(props.get("trait_unit"), props.get("trait_long_name"))
+
+    dataset_tags = _parse_dataset_tags(props.get("dataset_tags") or raw_props.get("dataset_tags") or {})
+    if dataset_tags:
+        props["dataset_tags"] = dataset_tags
     else:
-        # May trigger resolution when collection contains linked items.
-        items_to_write = list(collection.get_items())
+        props.pop("dataset_tags", None)
 
-    # Generate and attach/merge collection summaries and item_assets based on
-    # the new items. When extending an existing collection, merge new summary
-    # values with existing collection.summaries if present.
-    try:
-        new_summaries = build_collection_summaries(items_to_write)
-        if new_summaries:
-            # merge with existing summaries if available
+    trait_long = props.get("trait_long_name") or props.get("trait_short_name") or ""
+    stat_name = props.get("stat_name") or ""
+    props["title"] = _preserve_acronyms(build_item_title(trait_long, stat_name))
+    props["description"] = _preserve_acronyms(build_item_description(trait_long, stat_name))
+
+    # Try to recover proj:transform from legacy transform fields before dropping
+    # old keys completely.
+    if not props.get("proj:transform"):
+        transform = raw_props.get("transform")
+        if isinstance(transform, (list, tuple)):
             try:
-                existing = collection.summaries.to_dict() if getattr(collection, "summaries", None) else {}
-            except Exception:
-                existing = {}
-            merged = {}
-            # union existing and new values
-            for k, v in {**existing, **new_summaries}.items():
-                a = list(existing.get(k, [])) if existing else []
-                b = list(new_summaries.get(k, [])) if new_summaries else []
-                merged_vals = list(dict.fromkeys([*a, *b]))
-                if merged_vals:
-                    merged[k] = sorted(merged_vals, key=lambda x: x.lower())
-            if merged:
-                collection.summaries = pystac.Summaries(merged)
-    except Exception:
-        # Non-fatal
-        pass
-
-    try:
-        ef = collection.extra_fields or {}
-        ef.setdefault("item_assets", build_item_assets())
-        collection.extra_fields = ef
-    except Exception:
-        pass
-
-    # Clear existing collection links to avoid duplicates and set root/self/describe
-    collection.links = []
-    coll_title = get_collection_config().get("title")
-    # Self and describedby links. The root link is injected at JSON
-    # serialization time to avoid pystac attempting to resolve the target.
-    collection.add_link(pystac.Link("self", "./collection.json", media_type="application/json"))
-    if get_collection_config().get("zenodo_doi_url"):
-        doi_raw = get_collection_config().get("zenodo_doi_url")
-        doi_norm = doi_to_url(doi_raw) or doi_raw
-        # keep describedby for the DOI landing page
-        collection.add_link(pystac.Link("describedby", doi_norm, media_type="text/html"))
-        # add a canonical cite-as relation pointing to the DOI (configurable)
-        collection.add_link(pystac.Link("cite-as", doi_norm, media_type="text/html", title="Dataset DOI"))
-
-    # We'll accumulate item links for the collection and write items manually
-    collection_item_links: List[dict] = []
-
-    for item in items_to_write:
-        # Do not remove properties['datetime'] here; store publication date
-        # in properties['datetime'] (authoritative) and remove top-level
-        # datetime later when serializing.
-
-        # Ensure human-readable title/description are present on the Item
-        # object so they are included by pystac when converting to dict.
-        try:
-            iprops = item.properties or {}
-            if "title" not in iprops:
-                iprops["title"] = build_item_title(iprops.get("trait_long_name"), iprops.get("stat_name"))
-            if "description" not in iprops:
-                iprops["description"] = build_item_description(iprops.get("trait_long_name"), iprops.get("stat_name"))
-            item.properties = iprops
-        except Exception:
-            pass
-
-        # ensure bbox exists at top-level; if missing try to extract from asset href
-        if not item.bbox:
-            assets = item.assets or {}
-            primary = assets.get("data") or (next(iter(assets.values()), None) if assets else None)
-            if primary and getattr(primary, "href", None):
-                href = getattr(primary, "href")
-                try:
-                    rast_meta = extract_raster_metadata(Path(href))
-                    bb = rast_meta.get("bbox")
-                    if bb:
-                        item.bbox = bb
-                except Exception:
-                    # leave as-is if we cannot read the href (hosted URL etc.)
-                    pass
-
-        # Build the item JSON dict and replace its links with clean relative ones
-        item_json = item.to_dict()
-
-        # If an existing item file exists and we're preserving existing files,
-        # still sanitize its contents to remove raw TIFF metadata and move
-        # raster:bands into the asset. We'll read the existing JSON and
-        # sanitize it in-place to avoid leaving legacy metadata in the repo.
-        item_path = items_dir / f"{item.id}.json"
-        if item_path.exists() and not overwrite_items:
-            try:
-                existing = _json.loads(item_path.read_text(encoding="utf-8"))
-                # merge core fields from generated item_json (title/description/links)
-                # prefer existing asset href if present
-                # sanitize existing file
-                # Merge selected properties from in-memory item into existing JSON
-                existing_props = existing.get("properties", {}) or {}
-                mem_props = item.properties or {}
-                # keys we want to ensure exist from the in-memory item when missing
-                ensure_keys = ("proj:transform", "proj:code", "proj:bbox", "proj:shape", "gsd", "trait_unit", "title", "description", "datetime")
-                for k in ensure_keys:
-                    if k not in existing_props and k in mem_props and mem_props.get(k) is not None:
-                        existing_props[k] = mem_props.get(k)
-                existing["properties"] = existing_props
-                item_json = existing
-            except Exception:
-                # if reading fails, fall back to generated dict
-                item_json = item.to_dict()
-
-        # Sanitize the item JSON thoroughly: helper inlined for clarity
-        raw_props = item_json.get("properties", {}) or {}
-        # preserve properties['datetime'] (authoritative); drop temporal placeholders
-        props = {k: v for k, v in raw_props.items() if k not in ("start_datetime", "end_datetime")}
-
-        # Remove internal-only metadata and conflicting license/rights
-        for internal in ("stat_id", "stat_name", "license", "rights"):
-            props.pop(internal, None)
-
-        # remove any temporary raster band placeholder and normalize trait unit
-        props.pop("_raster_bands_tmp", None)
-        if props.get("trait_unit"):
-            props["trait_unit"] = _normalize_trait_unit(props.get("trait_unit"), props.get("trait_long_name"))
-
-        # Remove duplicate raster metadata keys that belong in proj:*/assets
-        for dup in ("nodata", "dtype", "resolution", "width", "height", "transform", "bbox", "crs"):
-            props.pop(dup, None)
-        # also drop any affine/transform/resolution-like strings that may have
-        # been embedded in dataset_tags or other raw properties
-        for tkey in ("transform", "affine", "resolution", "spatial_extent"):
-            props.pop(tkey, None)
-
-        # Parse and normalize dataset_tags from any compact tags available
-        dataset_tags_raw = props.get("dataset_tags") or raw_props.get("dataset_tags") or {}
-        # ensure transform-like keys are removed from dataset_tags
-        if isinstance(dataset_tags_raw, dict):
-            for tk in ("transform", "affine", "resolution", "crs", "width", "height", "spatial_extent"):
-                dataset_tags_raw.pop(tk, None)
-        parsed = _parse_dataset_tags(dataset_tags_raw)
-        if parsed:
-            # Ensure contact/provenance fields are not carried into item-level tags
-            for rm in ("author", "contact", "organization"):
-                parsed.pop(rm, None)
-            props["dataset_tags"] = parsed
-        else:
-            props.pop("dataset_tags", None)
-
-        # Ensure title/description exist and preserve acronym capitalization
-        trait_long = props.get("trait_long_name") or props.get("trait_short_name") or ""
-        stat_nm = props.get("stat_name") or ""
-
-        try:
-            title_val = _preserve_acronyms(build_item_title(trait_long, stat_nm))
-        except Exception:
-            title_val = None
-        try:
-            desc_val = build_item_description(trait_long, stat_nm)
-        except Exception:
-            desc_val = None
-
-        # Overwrite title/description to ensure consistent casing and acronym preservation
-        if title_val:
-            props["title"] = _preserve_acronyms(title_val)
-        if desc_val:
-            props["description"] = _preserve_acronyms(desc_val)
-
-        item_json["properties"] = props
-
-        # Remove top-level temporal placeholders and ensure top-level datetime
-        # is not present. The authoritative datetime lives in
-        # properties['datetime'] (ISO string).
-        item_json.pop("datetime", None)
-        item_json.pop("start_datetime", None)
-        item_json.pop("end_datetime", None)
-
-        # Move raster bands stored temporarily in properties into the data asset
-        # Also handle legacy cases where raster:bands may exist in properties
-        tmp_bands = None
-        if isinstance(raw_props.get("_raster_bands_tmp"), list):
-            tmp_bands = raw_props.get("_raster_bands_tmp")
-        elif isinstance(props.get("raster:bands"), list):
-            tmp_bands = props.get("raster:bands")
-            # remove it from properties copy
-            props.pop("raster:bands", None)
-
-        if tmp_bands:
-            # sanitize per-band tags: remove GDAL STATISTICS_* fields
-            clean_bands = []
-            for b in tmp_bands:
-                b2 = dict(b)
-                # remove STATISTICS_* entries
-                if isinstance(b2.get("tags"), dict):
-                    b2["tags"] = {k: v for k, v in b2.get("tags", {}).items() if not k.upper().startswith("STATISTICS_")}
-                    if not b2["tags"]:
-                        b2.pop("tags", None)
-                else:
-                    b2.pop("tags", None)
-                # normalize band unit: treat '-' as empty
-                if b2.get("unit") == "-":
-                    b2.pop("unit", None)
-                # ensure band unit matches normalized trait unit when applicable
-                if props.get("trait_unit") and not b2.get("unit"):
-                    b2["unit"] = props.get("trait_unit")
-                clean_bands.append(b2)
-
-            assets = item_json.get("assets", {})
-            data_asset = assets.get("data") or {}
-            # place raster:bands under the asset dict per Raster extension
-            data_asset["raster:bands"] = clean_bands
-            assets["data"] = data_asset
-            item_json["assets"] = assets
-
-        # Ensure proj:transform is present when raster metadata provided a numeric transform
-        try:
-            # if the item json came from an existing file it may contain a top-level
-            # 'transform' in properties or dataset_tags; prefer proj:transform and
-            # remove other copies
-            if (not item_json.get("properties", {}).get("proj:transform")):
-                # try raw_props first, then props, then attempt to read asset href
-                src_tr = None
-                # raw_props may include a 'transform' key from older dumps
-                if isinstance(raw_props.get("transform"), list):
-                    src_tr = raw_props.get("transform")
-                elif isinstance(props.get("transform"), list):
-                    src_tr = props.get("transform")
-                if src_tr and isinstance(src_tr, (list, tuple)):
-                    try:
-                        item_json.setdefault("properties", {})
-                        item_json["properties"]["proj:transform"] = [float(x) for x in list(src_tr)[:6]]
-                        # remove other transform copies
-                        item_json["properties"].pop("transform", None)
-                    except Exception:
-                        pass
-        except Exception:
-            pass
-
-        # Ensure asset media type and roles are present
-        if "assets" in item_json and "data" in item_json["assets"]:
-            a = item_json["assets"]["data"]
-            a.setdefault("type", COG_MEDIA_TYPE)
-            if not isinstance(a.get("roles"), list):
-                a["roles"] = ["data"]
-
-        # desired links for item (relative to items/ directory)
-        # Items should point root to the top-level catalog (../catalog.json)
-        # and keep parent/collection pointing to ../collection.json
-        item_links = [
-            {
-                "rel": "root",
-                "href": "../catalog.json",
-                "type": "application/json",
-                "title": "Global Plant Functional Trait Maps STAC Catalog",
-            },
-            {"rel": "parent", "href": "../collection.json", "type": "application/json", "title": coll_title},
-            {"rel": "collection", "href": "../collection.json", "type": "application/json", "title": coll_title},
-            {"rel": "self", "href": f"./{item.id}.json", "type": "application/geo+json"},
-        ]
-        item_json["links"] = item_links
-
-        # write item to items/{id}.json
-        item_path = items_dir / f"{item.id}.json"
-        try:
-            # Ensure authoritative datetime is present in properties before writing
-            try:
-                pprops = item_json.get("properties", {}) or {}
-                if not pprops.get("datetime"):
-                    pprops["datetime"] = PUBLISHED_DATE
-                    item_json["properties"] = pprops
-            except Exception:
-                pass
-            # Always write sanitized JSON. When preserving items we still want
-            # to remove sensitive or redundant metadata (license, embedded
-            # TIFF tags, etc.). This updates metadata without changing asset
-            # hrefs or IDs.
-            item_path.write_text(_json.dumps(item_json, indent=2), encoding="utf-8")
-        except Exception as exc:  # pragma: no cover - IO/runtime environment errors
-            raise RuntimeError(f"Failed to write item {item.id} to {item_path}: {exc}")
-
-        # add collection -> item link (relative path)
-        collection_item_links.append({"rel": "item", "href": f"./items/{item.id}.json", "type": "application/geo+json"})
-
-    # Instead of relying on the collected links (which were built from the
-    # set of items_to_write), regenerate the collection's item links from the
-    # actual files present in the items directory. This ensures all written
-    # item files are referenced in collection.json and avoids omissions when
-    # extending the collection across multiple runs.
-    # Clear any existing item links
-    collection.links = [l for l in (collection.links or []) if l.rel != "item"]
-    # Find all item files and add an item link for each
-    for p in sorted(items_dir.glob("*.json")):
-        collection.add_link(pystac.Link("item", f"./items/{p.name}", media_type="application/geo+json"))
-
-    # Sanitize all item files in items_dir to remove legacy/raw TIFF metadata
-    # and ensure raster:bands live under assets.data. This guarantees a
-    # consistent, non-redundant layout even for items that were not part of
-    # the current run (preserve-existing-items mode).
-    for p in sorted(items_dir.glob("*.json")):
-        try:
-            jd = _json.loads(p.read_text(encoding="utf-8"))
-        except Exception:
-            continue
-
-        raw_props = jd.get("properties", {}) or {}
-        # preserve properties['datetime'] (authoritative); drop temporal placeholders
-        props = {k: v for k, v in raw_props.items() if k not in ("start_datetime", "end_datetime")}
-        # ensure properties['datetime'] exists and is set to the publication date
-        if not props.get("datetime"):
-            try:
-                props["datetime"] = PUBLISHED_DATE
-            except Exception:
-                props["datetime"] = PUBLISHED_DATE
-        # remove temporary fields
-        props.pop("_raster_bands_tmp", None)
-
-        # normalize trait_unit
-        if props.get("trait_unit"):
-            props["trait_unit"] = _normalize_trait_unit(props.get("trait_unit"), props.get("trait_long_name"))
-
-        # remove internal/conflicting fields
-        for internal in ("stat_id", "stat_name", "license", "rights"):
-            props.pop(internal, None)
-        for dup in ("nodata", "dtype", "resolution", "width", "height", "transform", "bbox", "crs"):
-            props.pop(dup, None)
-        # drop any affine/transform/resolution-like strings tucked into properties
-        for tkey in ("transform", "affine", "resolution", "spatial_extent"):
-            props.pop(tkey, None)
-
-        # parse and normalize dataset_tags from any raw compact tags
-        dt_raw = props.get("dataset_tags") or raw_props.get("dataset_tags") or {}
-        if isinstance(dt_raw, dict):
-            for tk in ("transform", "affine", "resolution", "crs", "width", "height", "spatial_extent"):
-                dt_raw.pop(tk, None)
-        parsed = _parse_dataset_tags(dt_raw)
-        if parsed:
-            # Remove provenance/contact keys so collection-level metadata is authoritative
-            for rm in ("author", "contact", "organization"):
-                parsed.pop(rm, None)
-            props["dataset_tags"] = parsed
-        else:
-            props.pop("dataset_tags", None)
-
-        jd["properties"] = props
-
-        # move raster bands if present in properties into asset and clean them
-        tmp_bands = None
-        if isinstance(raw_props.get("_raster_bands_tmp"), list):
-            tmp_bands = raw_props.get("_raster_bands_tmp")
-        elif isinstance(props.get("raster:bands"), list):
-            tmp_bands = props.get("raster:bands")
-            props.pop("raster:bands", None)
-
-        if tmp_bands:
-            clean_bands = []
-            for b in tmp_bands:
-                b2 = dict(b)
-                # drop STATISTICS_* entries from tags
-                if isinstance(b2.get("tags"), dict):
-                    b2["tags"] = {k: v for k, v in b2.get("tags", {}).items() if not k.upper().startswith("STATISTICS_")}
-                    if not b2["tags"]:
-                        b2.pop("tags", None)
-                else:
-                    b2.pop("tags", None)
-                # ensure band unit matches trait unit when applicable
-                if props.get("trait_unit") and not b2.get("unit"):
-                    b2["unit"] = props.get("trait_unit")
-                clean_bands.append(b2)
-
-            assets = jd.get("assets", {})
-            data_asset = assets.get("data") or {}
-            data_asset["raster:bands"] = clean_bands
-            assets["data"] = data_asset
-            jd["assets"] = assets
-
-        # ensure asset media type and roles
-        if "assets" in jd and "data" in jd["assets"]:
-            a = jd["assets"]["data"]
-            a.setdefault("type", COG_MEDIA_TYPE)
-            if not isinstance(a.get("roles"), list):
-                a["roles"] = ["data"]
-
-        # preserve acronyms in description
-        try:
-            if isinstance(jd.get("properties", {}).get("description"), str):
-                jd["properties"]["description"] = _preserve_acronyms(jd["properties"]["description"])
-        except Exception:
-            pass
-
-        # ensure proj:transform exists and drop old transform-like copies
-        try:
-            jprops = jd.get("properties", {}) or {}
-            # if proj:transform missing, look for a numeric 'transform' in props
-            if not jprops.get("proj:transform"):
-                cand = None
-                if isinstance(raw_props.get("transform"), list):
-                    cand = raw_props.get("transform")
-                elif isinstance(jprops.get("transform"), list):
-                    cand = jprops.get("transform")
-                if cand and isinstance(cand, (list, tuple)):
-                    try:
-                        jprops["proj:transform"] = [float(x) for x in list(cand)[:6]]
-                    except Exception:
-                        pass
-            # remove other copies
-            jprops.pop("transform", None)
-            jprops.pop("affine", None)
-            jprops.pop("resolution", None)
-            jd["properties"] = jprops
-        except Exception:
-            pass
-        # write back sanitized JSON
-        try:
-            # Ensure top-level datetime is removed; authoritative datetime is in properties
-            jd.pop("datetime", None)
-            jd.pop("start_datetime", None)
-            jd.pop("end_datetime", None)
-            p.write_text(_json.dumps(jd, indent=2), encoding="utf-8")
-        except Exception:
-            # non-fatal; continue sanitizing other files
-            continue
-
-    # Final sweep: ensure assets.data.raster:bands have no empty tags and
-    # that band units are consistent with item trait_unit
-    for p in sorted(items_dir.glob("*.json")):
-        try:
-            jd = _json.loads(p.read_text(encoding="utf-8"))
-        except Exception:
-            continue
-        props = jd.get("properties", {}) or {}
-        trait_unit = props.get("trait_unit")
-        assets = jd.get("assets", {})
-        data = assets.get("data") or {}
-        bands = data.get("raster:bands")
-        changed = False
-        if isinstance(bands, list):
-            for b in bands:
-                # remove empty tags dicts
-                if isinstance(b.get("tags"), dict) and not b["tags"]:
-                    b.pop("tags", None)
-                    changed = True
-                # normalize '-' unit
-                if b.get("unit") == "-":
-                    if trait_unit:
-                        b["unit"] = trait_unit
-                    else:
-                        b.pop("unit", None)
-                    changed = True
-            if changed:
-                data["raster:bands"] = bands
-                assets["data"] = data
-                jd["assets"] = assets
-                try:
-                    p.write_text(_json.dumps(jd, indent=2), encoding="utf-8")
-                except Exception:
-                    pass
-
-    # Ensure every item file has properties.datetime populated (authoritative
-    # publication timestamp). This is a final, idempotent pass to make sure
-    # preserved items which lacked datetime get a canonical value.
-    for p in sorted(items_dir.glob("*.json")):
-        try:
-            jd = _json.loads(p.read_text(encoding="utf-8"))
-        except Exception:
-            continue
-        props = jd.get("properties", {}) or {}
-        if not props.get("datetime"):
-            props["datetime"] = PUBLISHED_DATE
-            jd["properties"] = props
-            try:
-                p.write_text(_json.dumps(jd, indent=2), encoding="utf-8")
+                props["proj:transform"] = [float(x) for x in list(transform)[:6]]
             except Exception:
                 pass
 
-    # write collection.json
-    coll_json = collection.to_dict()
+    item_json["properties"] = props
 
-    # Sanitize links in the serialized collection JSON to avoid absolute
-    # filesystem paths leaking into the output. Ensure `self` is a relative
-    # ./collection.json with type application/json and inject root/parent
-    # links that point to the top-level catalog (./catalog.json).
-    links = coll_json.get("links", []) or []
-    sanitized_links = []
+    item_json.pop("datetime", None)
+    item_json.pop("start_datetime", None)
+    item_json.pop("end_datetime", None)
 
-    # canonical root/parent target is the top-level catalog
-    root_href_serialized = "./catalog.json"
-    root_link_dict = {"rel": "root", "href": root_href_serialized, "type": "application/json", "title": "Global Plant Functional Trait Maps STAC Catalog"}
-    parent_link_dict = {"rel": "parent", "href": root_href_serialized, "type": "application/json", "title": "Global Plant Functional Trait Maps STAC Catalog"}
+    assets = item_json.get("assets") or {}
+    data_asset = assets.get("data") or {}
+    data_asset.setdefault("type", COG_MEDIA_TYPE)
+    if not isinstance(data_asset.get("roles"), list):
+        data_asset["roles"] = ["data"]
 
-    for l in links:
-        rel = l.get("rel")
-        # skip any existing root/parent links (we inject canonical ones)
-        if rel in ("root", "parent"):
+    raster_bands = _clean_raster_bands(_extract_raster_bands_from_properties(raw_props), props.get("trait_unit"))
+    if raster_bands:
+        data_asset["raster:bands"] = raster_bands
+
+    assets["data"] = data_asset
+    item_json["assets"] = assets
+
+    item_json["links"] = [
+        {
+            "rel": "root",
+            "href": "../catalog.json",
+            "type": "application/json",
+            "title": "Global Plant Functional Trait Maps STAC Catalog",
+        },
+        {
+            "rel": "parent",
+            "href": "../collection.json",
+            "type": "application/json",
+            "title": collection_title,
+        },
+        {
+            "rel": "collection",
+            "href": "../collection.json",
+            "type": "application/json",
+            "title": collection_title,
+        },
+        {
+            "rel": "self",
+            "href": f"./{item_json.get('id')}.json",
+            "type": "application/geo+json",
+        },
+    ]
+
+    return item_json
+
+
+def _serialize_item(item: pystac.Item, item_path: Path, overwrite_items: bool, collection_title: Optional[str]) -> dict:
+    """Serialize one item, merging selected generated fields into existing JSON when requested."""
+    item_json = item.to_dict()
+
+    if item_path.exists() and not overwrite_items:
+        try:
+            existing = _json.loads(item_path.read_text(encoding="utf-8"))
+            existing_props = existing.get("properties", {}) or {}
+            generated_props = item.properties or {}
+
+            for key in (
+                "proj:transform",
+                "proj:code",
+                "proj:bbox",
+                "proj:shape",
+                "gsd",
+                "trait_unit",
+                "title",
+                "description",
+                "datetime",
+                "_raster_bands_tmp",
+            ):
+                if key not in existing_props and generated_props.get(key) is not None:
+                    existing_props[key] = generated_props[key]
+
+            existing["properties"] = existing_props
+            existing.setdefault("assets", item_json.get("assets", {}))
+            item_json = existing
+        except Exception:
+            item_json = item.to_dict()
+
+    return _sanitize_item_json(item_json, collection_title)
+
+
+def _all_item_paths(items_dir: Path) -> List[Path]:
+    return sorted(items_dir.glob("*.json"), key=lambda path: path.name.lower())
+
+
+def _refresh_collection_links(collection: pystac.Collection, items_dir: Path) -> None:
+    """Keep collection metadata links and regenerate item links from files."""
+    preserved = [
+        link
+        for link in (collection.links or [])
+        if link.rel not in {"root", "parent", "item"}
+    ]
+
+    collection.links = preserved
+
+    for item_path in _all_item_paths(items_dir):
+        collection.add_link(
+            pystac.Link(
+                "item",
+                f"./items/{item_path.name}",
+                media_type="application/geo+json",
+            )
+        )
+
+
+def _sanitize_collection_json(collection_json: dict) -> dict:
+    """Return collection JSON with canonical navigation links and preserved metadata links."""
+    root_link = {
+        "rel": "root",
+        "href": "./catalog.json",
+        "type": "application/json",
+        "title": "Global Plant Functional Trait Maps STAC Catalog",
+    }
+    parent_link = {
+        "rel": "parent",
+        "href": "./catalog.json",
+        "type": "application/json",
+        "title": "Global Plant Functional Trait Maps STAC Catalog",
+    }
+    self_link = {"rel": "self", "href": "./collection.json", "type": "application/json"}
+
+    sanitized = [root_link, parent_link]
+    seen = {("root", "./catalog.json"), ("parent", "./catalog.json")}
+
+    def add_once(link: dict) -> None:
+        key = (link.get("rel"), link.get("href"))
+        if key not in seen:
+            sanitized.append(link)
+            seen.add(key)
+
+    add_once(self_link)
+
+    for link in collection_json.get("links", []) or []:
+        rel = link.get("rel")
+
+        if rel in {"root", "parent", "self"}:
             continue
-        if rel == "self":
-            sanitized_links.append({"rel": "self", "href": "./collection.json", "type": "application/json"})
-        elif rel == "describedby":
-            # use configured DOI landing page when available and normalize it
-            doi_raw = get_collection_config().get("zenodo_doi_url")
-            doi_url = doi_to_url(doi_raw) or doi_raw
-            sanitized_links.append({"rel": "describedby", "href": doi_url, "type": "text/html"})
-        elif rel == "cite-as":
-            doi_raw = get_collection_config().get("zenodo_doi_url")
-            doi_url = doi_to_url(doi_raw) or doi_raw
-            sanitized_links.append({"rel": "cite-as", "href": doi_url, "type": "text/html", "title": "Dataset DOI"})
-        else:
-            # keep other links (item links should already be relative)
-            sanitized_links.append(l)
-    # put root and parent first, then the rest
-    # avoid duplicating parent if sanitized_links already contains one
-    sanitized_links = [l for l in sanitized_links if l.get("rel") != "parent"]
-    coll_json["links"] = [root_link_dict, parent_link_dict] + sanitized_links
 
-    collection_path.write_text(_json.dumps(coll_json, indent=2), encoding="utf-8")
+        # Keep collection-level metadata links as created by create_collection().
+        # Do not reinterpret describedby/cite-as/via here.
+        add_once(link)
 
-    # Also write a lightweight catalog.json (top-level Catalog) in the same
-    # output directory so the hosted site can serve a small entry point.
+    collection_json["links"] = sanitized
+    return collection_json
+
+
+def _write_catalog(output_dir: Path, collection: pystac.Collection) -> None:
     try:
         from .config import CATALOG_ID, PRODUCT_TITLE
 
@@ -1456,16 +922,66 @@ def save_collection(
             "links": [
                 {"rel": "self", "href": "./catalog.json", "type": "application/json"},
                 {"rel": "root", "href": "./catalog.json", "type": "application/json"},
-                {"rel": "child", "href": "./collection.json", "type": "application/json", "title": collection.title},
+                {
+                    "rel": "child",
+                    "href": "./collection.json",
+                    "type": "application/json",
+                    "title": collection.title,
+                },
             ],
         }
-        catalog_path = output_dir / "catalog.json"
-        catalog_path.write_text(_json.dumps(catalog, indent=2), encoding="utf-8")
+        _json_write(output_dir / "catalog.json", catalog)
     except Exception:
-        # Non-fatal: continue
-        pass
+        LOGGER.exception("Could not write top-level catalog.json")
 
-    # EarthCODE registry writing has been intentionally removed. Use static
-    # files under outputs/earthcode_registry/ for any EarthCODE registry entries.
+
+def save_collection(
+    collection: pystac.Collection,
+    output_dir: Path,
+    overwrite_items: bool = True,
+    additional_items: Optional[List[pystac.Item]] = None,
+    full_stac_catalog_url: Optional[str] = None,
+) -> int:
+    """Save collection and items as a flat static STAC catalog.
+
+    ``full_stac_catalog_url`` is retained for backward-compatible function
+    signature only; EarthCODE registry writing is no longer handled here.
+    """
+    del full_stac_catalog_url
+
+    output_dir = Path(output_dir)
+    items_dir = output_dir / "items"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    items_dir.mkdir(parents=True, exist_ok=True)
+
+    items_to_write = list(additional_items) if additional_items is not None else list(collection.get_items())
+    collection_title = get_collection_config().get("title")
+
+    new_summaries = build_collection_summaries(items_to_write)
+    try:
+        existing_summaries = collection.summaries.to_dict() if getattr(collection, "summaries", None) else {}
+    except Exception:
+        existing_summaries = {}
+
+    merged_summaries = _merge_summaries(existing_summaries, new_summaries)
+    if merged_summaries:
+        collection.summaries = pystac.Summaries(merged_summaries)
+
+    collection.extra_fields = {
+        **(collection.extra_fields or {}),
+        "item_assets": build_item_assets(),
+    }
+
+    for item in items_to_write:
+        item_path = items_dir / f"{item.id}.json"
+        item_json = _serialize_item(item, item_path, overwrite_items, collection_title)
+        _json_write(item_path, item_json)
+
+    _refresh_collection_links(collection, items_dir)
+
+    collection_json = _sanitize_collection_json(collection.to_dict())
+    _json_write(output_dir / "collection.json", collection_json)
+
+    _write_catalog(output_dir, collection)
 
     return len(items_to_write)
