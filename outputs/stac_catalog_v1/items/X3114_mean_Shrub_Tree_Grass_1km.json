@@ -1,0 +1,186 @@
+{
+  "type": "Feature",
+  "stac_version": "1.1.0",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/projection/v2.0.0/schema.json",
+    "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
+  ],
+  "id": "X3114_mean_Shrub_Tree_Grass_1km",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          -180.0,
+          -65.47703940221221
+        ],
+        [
+          -180.0,
+          90.0
+        ],
+        [
+          180.0,
+          90.0
+        ],
+        [
+          180.0,
+          -65.47703940221221
+        ],
+        [
+          -180.0,
+          -65.47703940221221
+        ]
+      ]
+    ]
+  },
+  "bbox": [
+    -180.0,
+    -65.47703940221221,
+    180.0,
+    90.0
+  ],
+  "properties": {
+    "datetime": "2026-01-30T00:00:00Z",
+    "trait_id": "3114",
+    "trait_short_name": "Leaf area (3114)",
+    "trait_long_name": "Leaf area (in case of compound leaves: undefined if leaf or leaflet, undefined if petiole is in- or excluded)",
+    "trait_unit": "mm\u00b2",
+    "title": "Leaf area (in case of compound leaves: undefined if leaf or leaflet, undefined if petiole is in- or excluded) \u2014 Global 1 km Plant Trait Map",
+    "description": "Global 1 km map of community-weighted statistic leaf area (in case of compound leaves: undefined if leaf or leaflet, undefined if petiole is in- or excluded) derived from GBIF, sPlot, TRY, and Earth observation predictors.",
+    "proj:code": "EPSG:6933",
+    "proj:bbox": [
+      -17367530.445161372,
+      -7342230.205017054,
+      17367530.445161372,
+      7342230.205017056
+    ],
+    "proj:transform": [
+      1000.030543281014,
+      0.0,
+      -17367530.445161372,
+      0.0,
+      -1000.167580032292,
+      7342230.205017056
+    ],
+    "proj:shape": [
+      14682,
+      34734
+    ],
+    "gsd": 1000,
+    "dataset_tags": {
+      "keywords": [
+        "citizen-science",
+        "plant functional traits",
+        "global",
+        "1km",
+        "earth observation",
+        "gbif",
+        "splot",
+        "try",
+        "modis",
+        "soilgrids",
+        "vodca",
+        "worldclim"
+      ],
+      "pfts": "Shrub, Tree, Grass",
+      "model_performance": {
+        "R2": 0.33,
+        "Pearson's r": 0.58,
+        "nRMSE": 0.19,
+        "RMSE": 0.54,
+        "MAE": 0.43
+      },
+      "usage_notes": "This dataset contains extrapolations of trait data from the \n        TRY Trait Database matched with geotagged species observations from GBIF and \n        species abundances from sPlot. Extrapolations are the result of modeling gridded \n        trait values as a function of publicly available Earth observation datasets. All \n        model performance metrics (R2, Pearson's r, nRMSE, RMSE) are based on spatial \n        K-fold cross-validation against unseen sPlot observations only."
+    },
+    "trait_map:product_status": "analysis-ready"
+  },
+  "links": [
+    {
+      "rel": "root",
+      "href": "../catalog.json",
+      "type": "application/json",
+      "title": "Global Plant Functional Trait Maps STAC Catalog"
+    },
+    {
+      "rel": "parent",
+      "href": "../collection.json",
+      "type": "application/json",
+      "title": "Global Plant Functional Trait Maps at 1 km Resolution"
+    },
+    {
+      "rel": "collection",
+      "href": "../collection.json",
+      "type": "application/json",
+      "title": "Global Plant Functional Trait Maps at 1 km Resolution"
+    },
+    {
+      "rel": "self",
+      "href": "./X3114_mean_Shrub_Tree_Grass_1km.json",
+      "type": "application/geo+json"
+    }
+  ],
+  "assets": {
+    "data": {
+      "href": "https://zenodo.org/records/14646322/files/X3114_mean_Shrub_Tree_Grass_1km.tif",
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Leaf area (in case of compound leaves: undefined if leaf or leaflet, undefined if petiole is in- or excluded) Mean Raster",
+      "roles": [
+        "data"
+      ],
+      "raster:bands": [
+        {
+          "name": "trait_mean",
+          "description": "Leaf area (3114) (mean)",
+          "data_type": "int16",
+          "nodata": -32768.0,
+          "unit": "mm\u00b2",
+          "sampling": "area",
+          "scale": 0.2492811011402075,
+          "offset": 8171.089190857844,
+          "overviews": [
+            2,
+            4,
+            8,
+            16,
+            32
+          ]
+        },
+        {
+          "name": "coefficient_of_variation",
+          "description": "Coefficient of Variation",
+          "data_type": "int16",
+          "nodata": -32768.0,
+          "unit": "%",
+          "sampling": "area",
+          "scale": 1.7784278309917837e-05,
+          "offset": 0.5828496202229871,
+          "overviews": [
+            2,
+            4,
+            8,
+            16,
+            32
+          ]
+        },
+        {
+          "name": "area_of_applicability",
+          "description": "Area of Applicability mask",
+          "data_type": "int16",
+          "nodata": -32768.0,
+          "unit": "binary mask",
+          "sampling": "area",
+          "scale": 1.0,
+          "offset": 0.0,
+          "overviews": [
+            2,
+            4,
+            8,
+            16,
+            32
+          ]
+        }
+      ]
+    }
+  },
+  "collection": "global-plant-trait-maps"
+}
