@@ -1,0 +1,171 @@
+{
+  "type": "Feature",
+  "stac_version": "1.1.0",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/projection/v2.0.0/schema.json",
+    "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
+  ],
+  "id": "X281_mean_Shrub_Tree_Grass_1km",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          -180.0,
+          -65.47703940221221
+        ],
+        [
+          -180.0,
+          90.0
+        ],
+        [
+          180.0,
+          90.0
+        ],
+        [
+          180.0,
+          -65.47703940221221
+        ],
+        [
+          -180.0,
+          -65.47703940221221
+        ]
+      ]
+    ]
+  },
+  "bbox": [
+    -180.0,
+    -65.47703940221221,
+    180.0,
+    90.0
+  ],
+  "properties": {
+    "trait_id": "281",
+    "trait_short_name": "Stem conduit diameter",
+    "trait_long_name": "Stem conduit diameter (vessels, tracheids)",
+    "trait_unit": "\u03bcm",
+    "title": "Stem conduit diameter (vessels, tracheids) \u2014 Global 1 km Plant Trait Map",
+    "description": "Global 1 km map of community-weighted statistic stem conduit diameter (vessels, tracheids) derived from GBIF, sPlot, TRY, and Earth observation predictors.",
+    "datetime": "2026-01-30T00:00:00Z",
+    "proj:code": "EPSG:6933",
+    "proj:bbox": [
+      -17367530.445161372,
+      -7342230.205017054,
+      17367530.445161372,
+      7342230.205017056
+    ],
+    "proj:transform": [
+      1000.030543281014,
+      0.0,
+      -17367530.445161372,
+      0.0,
+      -1000.167580032292,
+      7342230.205017056
+    ],
+    "proj:shape": [
+      14682,
+      34734
+    ],
+    "gsd": 1000,
+    "dataset_tags": {
+      "model_performance": {
+        "R2": 0.35,
+        "Pearson's r": 0.6,
+        "nRMSE": 0.17,
+        "RMSE": 0.55,
+        "MAE": 0.42
+      },
+      "usage_notes": "This dataset contains extrapolations of trait data from the \n        TRY Trait Database matched with geotagged species observations from GBIF and \n        species abundances from sPlot. Extrapolations are the result of modeling gridded \n        trait values as a function of publicly available Earth observation datasets. All \n        model performance metrics (R2, Pearson's r, nRMSE, RMSE) are based on spatial \n        K-fold cross-validation against unseen sPlot observations only."
+    },
+    "trait_map:product_status": "analysis-ready"
+  },
+  "links": [
+    {
+      "rel": "root",
+      "href": "../catalog.json",
+      "type": "application/json",
+      "title": "Global Plant Functional Trait Maps STAC Catalog"
+    },
+    {
+      "rel": "parent",
+      "href": "../collection.json",
+      "type": "application/json",
+      "title": "Global Plant Functional Trait Maps at 1 km Resolution"
+    },
+    {
+      "rel": "collection",
+      "href": "../collection.json",
+      "type": "application/json",
+      "title": "Global Plant Functional Trait Maps at 1 km Resolution"
+    },
+    {
+      "rel": "self",
+      "href": "./X281_mean_Shrub_Tree_Grass_1km.json",
+      "type": "application/geo+json"
+    }
+  ],
+  "assets": {
+    "data": {
+      "href": "https://zenodo.org/records/14646322/files/X281_mean_Shrub_Tree_Grass_1km.tif",
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Stem conduit diameter (vessels, tracheids) Mean Raster",
+      "roles": [
+        "data"
+      ],
+      "raster:bands": [
+        {
+          "name": "trait_mean",
+          "description": "Stem conduit diameter (mean)",
+          "data_type": "int16",
+          "nodata": -32768.0,
+          "unit": "\u03bcm",
+          "sampling": "area",
+          "scale": 0.003941509345129457,
+          "offset": 138.82922551225866,
+          "overviews": [
+            2,
+            4,
+            8,
+            16,
+            32
+          ]
+        },
+        {
+          "name": "coefficient_of_variation",
+          "description": "Coefficient of Variation",
+          "data_type": "int16",
+          "nodata": -32768.0,
+          "unit": "%",
+          "sampling": "area",
+          "scale": 2.72309245276701e-05,
+          "offset": 0.892412649540347,
+          "overviews": [
+            2,
+            4,
+            8,
+            16,
+            32
+          ]
+        },
+        {
+          "name": "area_of_applicability",
+          "description": "Area of Applicability mask",
+          "data_type": "int16",
+          "nodata": -32768.0,
+          "unit": "binary mask",
+          "sampling": "area",
+          "scale": 1.0,
+          "offset": 0.0,
+          "overviews": [
+            2,
+            4,
+            8,
+            16,
+            32
+          ]
+        }
+      ]
+    }
+  },
+  "collection": "global-plant-trait-maps"
+}

@@ -38,6 +38,10 @@ EXPECTED_LICENSE = "CC-BY-4.0"
 EXPECTED_DOI = "10.5281/zenodo.14646322"
 EXPECTED_DOI_URL = "https://doi.org/10.5281/zenodo.14646322"
 EXPECTED_ASSET_PREFIX = "https://zenodo.org/records/14646322/files/"
+EXPECTED_PUBLICATION_DOI = "https://doi.org/10.1101/2025.03.10.641660"
+EXPECTED_DOCUMENTATION_URL = "https://planttraits.earth/"
+EXPECTED_TEMPORAL_START = "2026-01-30T00:00:00Z"
+EXPECTED_TEMPORAL_END = "2026-01-30T23:59:59Z"
 
 
 class ValidationReport:
@@ -156,8 +160,9 @@ def validate_collection(collection: dict[str, Any], collection_path: Path, repor
         .get("temporal", {})
         .get("interval")
     )
-    if interval != [[None, None]]:
-        report.warn(f"collection: expected temporal extent [[null, null]], got {interval}")
+        expected_interval = [[EXPECTED_TEMPORAL_START, EXPECTED_TEMPORAL_END]]
+        if interval != expected_interval:
+            report.warn(f"collection: expected temporal extent {expected_interval}, got {interval}")
 
     # Links.
     links = collection.get("links", [])
@@ -183,6 +188,30 @@ def validate_collection(collection: dict[str, Any], collection_path: Path, repor
         report.warn("collection: missing cite-as link to DOI")
     elif not any(link.get("href") == EXPECTED_DOI_URL for link in cite_as):
         report.warn("collection: cite-as link does not point to expected DOI URL")
+
+        # Check for publication DOI link
+        pub_dois = get_links(collection, "describedby")
+        if not any(link.get("href") == EXPECTED_PUBLICATION_DOI for link in pub_dois):
+            report.warn(f"collection: describedby link should point to publication DOI {EXPECTED_PUBLICATION_DOI}")
+
+        # Check for documentation link
+        via_links = get_links(collection, "via")
+        if not via_links:
+            report.warn("collection: missing via link to documentation")
+        elif not any(link.get("href") == EXPECTED_DOCUMENTATION_URL for link in via_links):
+            report.warn(f"collection: via link should point to {EXPECTED_DOCUMENTATION_URL}")
+
+        # Check for osc:missions
+        missions = collection.get("osc:missions")
+        if not missions:
+            report.warn("collection: missing osc:missions")
+        elif not isinstance(missions, list):
+            report.warn("collection: osc:missions must be a list")
+        else:
+            if "modis" not in missions:
+                report.warn("collection: osc:missions should include 'modis'")
+            if "in-situ-observations" not in missions:
+                report.warn("collection: osc:missions should include 'in-situ-observations'")
 
     item_links = get_links(collection, "item")
     if not item_links:

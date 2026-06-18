@@ -1,0 +1,489 @@
+{
+  "osc:variables": [
+    "srl",
+    "seed-number",
+    "leaf-c",
+    "leaf-length",
+    "leaf-width",
+    "leaf-c-n-ratio",
+    "leaf-n",
+    "leaf-p",
+    "leaf-fresh-mass",
+    "stem-conduit-density",
+    "stem-diameter",
+    "chromosome-number",
+    "chromosome-cdna-content",
+    "dispersal-unit-length",
+    "seed-mass",
+    "seed-length",
+    "stem-conduit-diameter",
+    "conduit-element-length",
+    "wood-fiber-lengths",
+    "wood-ray-density",
+    "plant-height",
+    "plant-height",
+    "leaf-area",
+    "leaf-area",
+    "leaf-area",
+    "sla",
+    "leaf-water-content",
+    "seed-number",
+    "leaf-thickness",
+    "ldmc",
+    "ssd",
+    "leaf-n",
+    "leaf-dry-mass",
+    "srl",
+    "rooting-depth",
+    "leaf-delta-15n",
+    "seed-germination-rate"
+  ],
+  "links_to_add_prod_collection": [
+    {
+      "rel": "related",
+      "href": "../../variables/srl/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Srl"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/seed-number/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Seed Number"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-c/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf C"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-length/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf Length"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-width/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf Width"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-c-n-ratio/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf C/N Ratio"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-n/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf N (Mass)"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-p/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf P"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-fresh-mass/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf Fresh Mass"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/stem-conduit-density/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Stem Conduit Density"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/stem-diameter/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Stem Diameter"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/chromosome-number/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Chromosome Number"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/chromosome-cdna-content/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Chromosome Cdna Content"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/dispersal-unit-length/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Dispersal Unit Length"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/seed-mass/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Seed Mass"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/seed-length/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Seed Length"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/stem-conduit-diameter/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Stem Conduit Diameter"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/conduit-element-length/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Conduit Element Length"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/wood-fiber-lengths/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Wood Fiber Lengths"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/wood-ray-density/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Wood Ray Density"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/plant-height/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Plant Height"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/plant-height/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Plant Height (Gen.)"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-area/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf Area (3112)"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-area/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf Area"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-area/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf Area (3114)"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/sla/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Sla"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-water-content/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf Water Content"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/seed-number/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Seed Number (Disp.)"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-thickness/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf Thickness"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/ldmc/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Ldmc"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/ssd/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Ssd"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-n/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf N (Area)"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-dry-mass/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf Dry Mass"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/srl/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Srl (Fine)"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/rooting-depth/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Rooting Depth"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/leaf-delta-15n/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Leaf Delta 15N"
+    },
+    {
+      "rel": "related",
+      "href": "../../variables/seed-germination-rate/catalog.json",
+      "type": "application/json",
+      "title": "Variable: Seed Germination Rate"
+    }
+  ],
+  "links_to_add_var_catalog": [
+    {
+      "rel": "child",
+      "href": "./srl/catalog.json",
+      "type": "application/json",
+      "title": "Srl"
+    },
+    {
+      "rel": "child",
+      "href": "./seed-number/catalog.json",
+      "type": "application/json",
+      "title": "Seed Number"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-c/catalog.json",
+      "type": "application/json",
+      "title": "Leaf C"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-length/catalog.json",
+      "type": "application/json",
+      "title": "Leaf Length"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-width/catalog.json",
+      "type": "application/json",
+      "title": "Leaf Width"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-c-n-ratio/catalog.json",
+      "type": "application/json",
+      "title": "Leaf C/N Ratio"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-n/catalog.json",
+      "type": "application/json",
+      "title": "Leaf N (Mass)"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-p/catalog.json",
+      "type": "application/json",
+      "title": "Leaf P"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-fresh-mass/catalog.json",
+      "type": "application/json",
+      "title": "Leaf Fresh Mass"
+    },
+    {
+      "rel": "child",
+      "href": "./stem-conduit-density/catalog.json",
+      "type": "application/json",
+      "title": "Stem Conduit Density"
+    },
+    {
+      "rel": "child",
+      "href": "./stem-diameter/catalog.json",
+      "type": "application/json",
+      "title": "Stem Diameter"
+    },
+    {
+      "rel": "child",
+      "href": "./chromosome-number/catalog.json",
+      "type": "application/json",
+      "title": "Chromosome Number"
+    },
+    {
+      "rel": "child",
+      "href": "./chromosome-cdna-content/catalog.json",
+      "type": "application/json",
+      "title": "Chromosome Cdna Content"
+    },
+    {
+      "rel": "child",
+      "href": "./dispersal-unit-length/catalog.json",
+      "type": "application/json",
+      "title": "Dispersal Unit Length"
+    },
+    {
+      "rel": "child",
+      "href": "./seed-mass/catalog.json",
+      "type": "application/json",
+      "title": "Seed Mass"
+    },
+    {
+      "rel": "child",
+      "href": "./seed-length/catalog.json",
+      "type": "application/json",
+      "title": "Seed Length"
+    },
+    {
+      "rel": "child",
+      "href": "./stem-conduit-diameter/catalog.json",
+      "type": "application/json",
+      "title": "Stem Conduit Diameter"
+    },
+    {
+      "rel": "child",
+      "href": "./conduit-element-length/catalog.json",
+      "type": "application/json",
+      "title": "Conduit Element Length"
+    },
+    {
+      "rel": "child",
+      "href": "./wood-fiber-lengths/catalog.json",
+      "type": "application/json",
+      "title": "Wood Fiber Lengths"
+    },
+    {
+      "rel": "child",
+      "href": "./wood-ray-density/catalog.json",
+      "type": "application/json",
+      "title": "Wood Ray Density"
+    },
+    {
+      "rel": "child",
+      "href": "./plant-height/catalog.json",
+      "type": "application/json",
+      "title": "Plant Height"
+    },
+    {
+      "rel": "child",
+      "href": "./plant-height/catalog.json",
+      "type": "application/json",
+      "title": "Plant Height (Gen.)"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-area/catalog.json",
+      "type": "application/json",
+      "title": "Leaf Area (3112)"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-area/catalog.json",
+      "type": "application/json",
+      "title": "Leaf Area"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-area/catalog.json",
+      "type": "application/json",
+      "title": "Leaf Area (3114)"
+    },
+    {
+      "rel": "child",
+      "href": "./sla/catalog.json",
+      "type": "application/json",
+      "title": "Sla"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-water-content/catalog.json",
+      "type": "application/json",
+      "title": "Leaf Water Content"
+    },
+    {
+      "rel": "child",
+      "href": "./seed-number/catalog.json",
+      "type": "application/json",
+      "title": "Seed Number (Disp.)"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-thickness/catalog.json",
+      "type": "application/json",
+      "title": "Leaf Thickness"
+    },
+    {
+      "rel": "child",
+      "href": "./ldmc/catalog.json",
+      "type": "application/json",
+      "title": "Ldmc"
+    },
+    {
+      "rel": "child",
+      "href": "./ssd/catalog.json",
+      "type": "application/json",
+      "title": "Ssd"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-n/catalog.json",
+      "type": "application/json",
+      "title": "Leaf N (Area)"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-dry-mass/catalog.json",
+      "type": "application/json",
+      "title": "Leaf Dry Mass"
+    },
+    {
+      "rel": "child",
+      "href": "./srl/catalog.json",
+      "type": "application/json",
+      "title": "Srl (Fine)"
+    },
+    {
+      "rel": "child",
+      "href": "./rooting-depth/catalog.json",
+      "type": "application/json",
+      "title": "Rooting Depth"
+    },
+    {
+      "rel": "child",
+      "href": "./leaf-delta-15n/catalog.json",
+      "type": "application/json",
+      "title": "Leaf Delta 15N"
+    },
+    {
+      "rel": "child",
+      "href": "./seed-germination-rate/catalog.json",
+      "type": "application/json",
+      "title": "Seed Germination Rate"
+    }
+  ]
+}

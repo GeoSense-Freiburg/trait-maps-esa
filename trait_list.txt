@@ -1,0 +1,37 @@
+1080	SRL	Root length per root dry mass (specific root length, SRL)	cm g⁻¹
+138	Seed number	Seed number per reproduction unit	count
+13	Leaf C	Leaf carbon (C) content per leaf dry mass	mg g⁻¹
+144	Leaf length	Leaf length	mm
+145	Leaf width	Leaf width	mm
+146	Leaf C/N ratio	Leaf carbon/nitrogen (C/N) ratio	g g⁻¹
+14	Leaf N (mass)	Leaf nitrogen (N) content per leaf dry mass	mg g⁻¹
+15	Leaf P	Leaf phosphorus (P) content per leaf dry mass	mg g⁻¹
+163	Leaf fresh mass	Leaf fresh mass	g
+169	Stem conduit density	Stem conduit density (vessels and tracheids)	mm⁻²
+21	Stem diameter	Stem diameter	m
+223	Chromosome number	Species genotype: chromosome number	count
+224	Chromosome cDNA content	Species genotype: chromosome cDNA content	Gb
+237	Dispersal unit length	Dispersal unit length	mm
+26	Seed mass	Seed dry mass	mg
+27	Seed length	Seed length	mm
+281	Stem conduit diameter	Stem conduit diameter (vessels, tracheids)	μm
+282	Conduit element length	Wood vessel element length; stem conduit (vessel and tracheids) element length	μm
+289	Wood fiber lengths	Wood fiber lengths	μm
+297	Wood ray density	Wood rays per millimetre (wood ray density)	mm⁻¹
+3106	Plant height	Plant height vegetative	m
+3107	Plant height (gen.)	Plant height generative	m
+3112	Leaf area (3112)	Leaf area (in case of compound leaves: leaf, undefined if petiole in- or excluded)	mm²
+3113	Leaf area	Leaf area (in case of compound leaves: leaflet, undefined if petiole is in- or excluded)	mm²
+3114	Leaf area (3114)	Leaf area (in case of compound leaves: undefined if leaf or leaflet, undefined if petiole is in- or excluded)	mm²
+3117	SLA	Leaf area per leaf dry mass (specific leaf area, SLA or 1/LMA): undefined if petiole is in- or excluded)	m² kg⁻¹
+3120	Leaf water content	Leaf water content per leaf dry mass (not saturated)	g g⁻¹
+351	Seed number (disp.)	Seed number per dispersal unit	count
+46	Leaf thickness	Leaf thickness	mm
+47	LDMC	Leaf dry mass per leaf fresh mass (leaf dry matter content, LDMC)	g g⁻¹
+4	SSD	Stem specific density (SSD) or wood density (stem dry mass per stem fresh volume)	g cm⁻³
+50	Leaf N (area)	Leaf nitrogen (N) content per leaf area	g m⁻²
+55	Leaf dry mass	Leaf dry mass (single leaf)	g
+614	SRL (fine)	Fine root length per fine root dry mass (specific fine root length, SRL)	cm g⁻¹
+6	Rooting depth	Root rooting depth	m
+78	Leaf delta 15N	Leaf nitrogen (N) isotope signature (delta 15N)	ppm
+95	Seed germination rate	Seed germination rate (germination efficiency)	days

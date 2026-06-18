@@ -211,6 +211,8 @@ dependencies = [
     { name = "pystack" },
     { name = "rasterio", version = "1.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "rasterio", version = "1.5.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "rio-cogeo", version = "6.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "rio-cogeo", version = "7.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
 
 [package.optional-dependencies]
@@ -228,6 +230,7 @@ requires-dist = [
     { name = "pystack", specifier = ">=1.6.0" },
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "rasterio" },
+    { name = "rio-cogeo", specifier = ">=6.0.0" },
     { name = "rio-cogeo", marker = "extra == 'dev'" },
     { name = "stac-validator", marker = "extra == 'dev'" },
 ]
