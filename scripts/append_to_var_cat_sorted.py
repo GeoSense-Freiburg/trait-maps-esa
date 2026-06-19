@@ -30,7 +30,7 @@ print(f"Sorted {len(child_links)} variable links.")
 import json
 from pathlib import Path
 
-catalog_path = Path("/home/charlektra/Documents/uniFreiburg/Geosense/open-science-catalog-metadata/variables/catalog.json")
+catalog_path = Path("metadata_earth_code/catalog_original_vars.json")
 catalog_path_n = Path("/home/charlektra/Documents/uniFreiburg/Geosense/open-science-catalog-metadata/variables/catalog_new.json")
 
 variables_dir = Path("metadata_earth_code/variables")
@@ -53,7 +53,7 @@ for child_catalog_path in sorted(variables_dir.glob("*/catalog.json")):
             "rel": "child",
             "href": f"./{variable_id}/catalog.json",
             "type": "application/json",
-            "title": title.title(),
+            "title": title
         }
     )
 
