@@ -62,6 +62,11 @@ def build_parser() -> argparse.ArgumentParser:
 		required=False,
 		help="Public URL of the full hosted STAC catalog (used in registry child link)",
 	)
+	p.add_argument(
+		"--add-render-extension",
+		action="store_true",
+		help="Add STAC Render Extension metadata to generated items",
+	)
 	return p
 
 
@@ -88,7 +93,12 @@ def main(argv: Optional[list[str]] = None) -> None:
 		else:
 			raise
 
-	new_collection = build_collection_from_directory(maps_dir, trait_metadata, stat_metadata)
+	new_collection = build_collection_from_directory(
+		maps_dir,
+		trait_metadata,
+		stat_metadata,
+		include_render_extension=args.add_render_extension,
+	)
 
 	# attach product_status to each item
 	for it in new_collection.get_items():

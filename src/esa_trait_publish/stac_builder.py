@@ -18,6 +18,7 @@ from .config import (
     ZENODO_FILE_BASE_URL,
     OSC_EXTENSION,
     PROJECTION_EXTENSION,
+    RENDER_EXTENSION,
     OSC_TYPE,
     OSC_STATUS,
     OSC_PROJECT,
@@ -57,6 +58,27 @@ ACRONYM_MAP = {
     "ldmc": "LDMC",
     "c:n": "C:N",
     "cn": "C:N",
+}
+
+RENDER_PRESETS = {
+    "mean": {
+        "title": "Trait Mean",
+        "assets": ["data"],
+        "bidx": [1],
+        "colormap_name": "viridis",
+    },
+    "cv": {
+        "title": "Coefficient of Variation",
+        "assets": ["data"],
+        "bidx": [2],
+        "colormap_name": "magma",
+    },
+    "aoa": {
+        "title": "Area of Applicability",
+        "assets": ["data"],
+        "bidx": [3],
+        "colormap_name": "gray",
+    },
 }
 
 INTERNAL_ITEM_PROPERTIES = {
@@ -131,6 +153,14 @@ def _ensure_extension(stac_object: pystac.STACObject, extension_url: str) -> Non
     if extension_url not in extensions:
         extensions.append(extension_url)
     stac_object.stac_extensions = extensions
+
+
+def add_render_extension(item: pystac.Item) -> pystac.Item:
+    """Add render extension metadata for the multiband COG asset."""
+    _ensure_extension(item, RENDER_EXTENSION)
+    item.properties = item.properties or {}
+    item.properties["renders"] = dict(RENDER_PRESETS)
+    return item
 
 
 def _preserve_acronyms(text: str) -> str:
@@ -516,6 +546,7 @@ def create_item_from_raster(
     stat_mapping: Dict,
     base_asset_href: Optional[str] = None,
     asset_href_resolver: Optional[Callable[[Path], str]] = None,
+    include_render_extension: bool = True,
 ) -> pystac.Item:
     """Create a STAC Item for a single raster file."""
     raster_path = Path(raster_path)
@@ -569,6 +600,9 @@ def create_item_from_raster(
     _ensure_extension(item, PROJECTION_EXTENSION)
     _ensure_extension(item, RASTER_EXTENSION)
 
+    if include_render_extension:
+        add_render_extension(item)
+
     return item
 
 
@@ -599,6 +633,7 @@ def build_collection_from_directory(
     stat_metadata_path: Path,
     base_asset_href: Optional[str] = None,
     asset_href_resolver: Optional[Callable[[Path], str]] = None,
+    include_render_extension: bool = True,
 ) -> pystac.Collection:
     """Build a collection populated from rasters in ``maps_dir``."""
     trait_map = load_trait_metadata(Path(trait_metadata_path))
@@ -613,6 +648,7 @@ def build_collection_from_directory(
             stat_map,
             base_asset_href=base_asset_href,
             asset_href_resolver=asset_href_resolver,
+            include_render_extension=include_render_extension,
         )
         collection.add_item(item)
 
@@ -834,6 +870,19 @@ def _serialize_item(item: pystac.Item, item_path: Path, overwrite_items: bool, c
             ):
                 if key not in existing_props and generated_props.get(key) is not None:
                     existing_props[key] = generated_props[key]
+
+            # Merge render presets when preserving existing items
+            if "renders" not in existing_props and generated_props.get("renders") is not None:
+                existing_props["renders"] = generated_props.get("renders")
+
+            # Ensure stac_extensions include any generated extensions (e.g., render)
+            existing_exts = list(existing.get("stac_extensions") or [])
+            generated_exts = list(item.stac_extensions or [])
+            for ext in generated_exts:
+                if ext not in existing_exts:
+                    existing_exts.append(ext)
+            if existing_exts:
+                existing["stac_extensions"] = existing_exts
 
             existing["properties"] = existing_props
             existing.setdefault("assets", item_json.get("assets", {}))

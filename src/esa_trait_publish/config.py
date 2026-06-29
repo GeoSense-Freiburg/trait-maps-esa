@@ -59,6 +59,7 @@ ZENODO_FILE_BASE_URL: str = "https://zenodo.org/records/14646322/files"
 # STAC extension URLs and OSC project defaults
 OSC_EXTENSION: str = "https://stac-extensions.github.io/osc/v1.0.0/schema.json"
 PROJECTION_EXTENSION: str = "https://stac-extensions.github.io/projection/v2.0.0/schema.json"
+RENDER_EXTENSION: str = "https://stac-extensions.github.io/render/v2.0.0/schema.json"
 
 # Scientific extension URL
 SCIENTIFIC_EXTENSION: str = "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
