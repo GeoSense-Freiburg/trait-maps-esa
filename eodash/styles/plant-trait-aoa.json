@@ -1,0 +1,8 @@
+{
+  "title": "Area of Applicability warning",
+  "insideValue": 0,
+  "outsideValue": 1,
+  "crossColor": "#ff6d00",
+  "crossAlpha": 0.95,
+  "rendering": "native-webgl-shader"
+}

@@ -1,0 +1,7 @@
+{
+  "title": "Plant trait mean",
+  "palette": ["#ffffe5", "#addd8e", "#41ab5d", "#005a32"],
+  "scale": "linear",
+  "rangeSource": "int16 domain transformed with raster:bands scale and offset",
+  "opacity": 1
+}

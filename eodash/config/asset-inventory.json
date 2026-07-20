@@ -1,0 +1,4822 @@
+{
+  "sourceCatalog": "stac_catalogs/stac_catalog_v1/catalog.json",
+  "catalogId": "global-plant-trait-maps-catalog",
+  "stacVersion": "1.1.0",
+  "collections": [
+    {
+      "id": "global-plant-trait-maps",
+      "items": [
+        {
+          "id": "X1080_mean_Shrub_Tree_Grass_1km",
+          "title": "SRL",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X1080_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "SRL (mean)",
+              "unit": "cm g⁻¹",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0666199118315287,
+              "offset": 35058.74410501388,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X1080_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.575518257049469e-05,
+              "offset": 0.8441900458565215,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X1080_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X138_mean_Shrub_Tree_Grass_1km",
+          "title": "Seed number",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X138_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Seed number (repr.) (mean)",
+              "unit": "count",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 9.974281608804327,
+              "offset": 326828.15143675584,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X138_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.3520447300398518e-05,
+              "offset": 0.7709172939648852,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X138_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X13_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf C",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X13_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf C (mean)",
+              "unit": "mg g⁻¹",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.0032486534766512296,
+              "offset": 460.00291048945945,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X13_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.958739654434767e-05,
+              "offset": 0.6420001681326539,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X13_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X144_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf length",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X144_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf length (mean)",
+              "unit": "mm",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.027057485758953625,
+              "offset": 888.820798420179,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X144_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "1",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.247349756167821e-05,
+              "offset": 0.7364941298837948,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X144_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask (0 = inside, 1 = outside)",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X145_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf width",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X145_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf width (mean)",
+              "unit": "mm",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.0002808640591262244,
+              "offset": 9.143947645298741,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X145_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.9618532222884204e-05,
+              "offset": 0.6430930492206244,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X145_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X146_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf C/N ratio",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X146_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf C/N ratio (mean)",
+              "unit": "g g⁻¹",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.0011129231985353392,
+              "offset": 44.611232876918066,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X146_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 3.0018755825175247e-05,
+              "offset": 0.9837880188570125,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X146_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X14_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf N (mass)",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X14_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf N (mass) (mean)",
+              "unit": "mg g⁻¹",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.000690275579888194,
+              "offset": 29.781781797317265,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X14_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 3.0311420114750037e-05,
+              "offset": 0.9934412900183816,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X14_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X15_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf P",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X15_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf P (mean)",
+              "unit": "mg g⁻¹",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 6.760865541194234e-05,
+              "offset": 2.55018063478952,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X15_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 3.357274809653611e-05,
+              "offset": 1.100258457838208,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X15_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X163_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf fresh mass",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X163_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf fresh mass (mean)",
+              "unit": "g",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.00012659994459046823,
+              "offset": 4.115707802850766,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X163_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.2930800906417546e-05,
+              "offset": 0.4238979200308677,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X163_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X169_mean_Shrub_Tree_Grass_1km",
+          "title": "Stem conduit density",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X169_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Stem conduit density (mean)",
+              "unit": "mm⁻²",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.16803516534786858,
+              "offset": 5510.938718513815,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X169_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.7693175335582784e-05,
+              "offset": 0.9076506178753334,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X169_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X21_mean_Shrub_Tree_Grass_1km",
+          "title": "Stem diameter",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X21_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Stem diameter (mean)",
+              "unit": "m",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.1009531158649722e-05,
+              "offset": 0.6792662520308768,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X21_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.4101727261381248e-05,
+              "offset": 0.4622607254932518,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X21_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X223_mean_Shrub_Tree_Grass_1km",
+          "title": "Chromosome number",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X223_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Chromosome number (mean)",
+              "unit": "count",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.0007585400850925916,
+              "offset": 39.7656547499301,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X223_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.7519549148488085e-05,
+              "offset": 0.9018350578226091,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X223_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X224_mean_Shrub_Tree_Grass_1km",
+          "title": "Chromosome cDNA content",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X224_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Chromosome cDNA content (mean)",
+              "unit": "Gb",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.30188487497439154,
+              "offset": 9892.64562940065,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X224_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.6236406353330977e-05,
+              "offset": 0.532183981675189,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X224_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X237_mean_Shrub_Tree_Grass_1km",
+          "title": "Dispersal unit length",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X237_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Dispersal unit length (mean)",
+              "unit": "mm",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.0005115433590586406,
+              "offset": 17.34655550031693,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X237_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.7968590959890762e-05,
+              "offset": 0.588963515481737,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X237_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X26_mean_Shrub_Tree_Grass_1km",
+          "title": "Seed mass",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X26_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Seed mass (mean)",
+              "unit": "mg",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 6.727675640423322,
+              "offset": 220445.44824734962,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X26_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.822093013616337e-05,
+              "offset": 0.5972414862917503,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X26_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X27_mean_Shrub_Tree_Grass_1km",
+          "title": "Seed length",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X27_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Seed length (mean)",
+              "unit": "mm",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.0006466355682439038,
+              "offset": 21.661042202864095,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X27_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.9099024615155767e-05,
+              "offset": 0.6260886553936871,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X27_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X281_mean_Shrub_Tree_Grass_1km",
+          "title": "Stem conduit diameter",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X281_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Stem conduit diameter (mean)",
+              "unit": "μm",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.003941509345129457,
+              "offset": 138.82922551225866,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X281_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.72309245276701e-05,
+              "offset": 0.892412649540347,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X281_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X282_mean_Shrub_Tree_Grass_1km",
+          "title": "Conduit element length",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X282_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Conduit element length (mean)",
+              "unit": "μm",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.049795784471848986,
+              "offset": 1746.3975319011115,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X282_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.651938012739917e-05,
+              "offset": 0.8691010186448693,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X282_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X289_mean_Shrub_Tree_Grass_1km",
+          "title": "Wood fiber lengths",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X289_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Wood fiber lengths (mean)",
+              "unit": "μm",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.10034269741974629,
+              "offset": 3472.445553220723,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X289_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.984786172223169e-05,
+              "offset": 0.650429345179873,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X289_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X297_mean_Shrub_Tree_Grass_1km",
+          "title": "Wood ray density",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X297_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Wood ray density (mean)",
+              "unit": "mm⁻¹",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.000466469553038223,
+              "offset": 17.13708905023259,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X297_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.7857593036274197e-05,
+              "offset": 0.5852684978817706,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X297_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X3106_mean_Shrub_Tree_Grass_1km",
+          "title": "Plant height",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3106_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Plant height (veg.) (mean)",
+              "unit": "m",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.9222892164064914,
+              "offset": 30220.412064773183,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3106_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0147567663061329e-05,
+              "offset": 0.33274048139719525,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3106_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X3107_mean_Shrub_Tree_Grass_1km",
+          "title": "Plant height (gen.)",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3107_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Plant height (gen.) (mean)",
+              "unit": "m",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.34601071638914016,
+              "offset": 11337.664716903902,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3107_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.4537771819288428e-05,
+              "offset": 0.47656687049311586,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3107_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X3112_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf area (3112)",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3112_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf area (3112) (mean)",
+              "unit": "mm²",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.131643616829711,
+              "offset": 37091.2589678899,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3112_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.067170207367119e-05,
+              "offset": 0.6775597581654438,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3112_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X3113_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf area",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3113_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf area (3113) (mean)",
+              "unit": "mm²",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.48176748292230037,
+              "offset": 15791.77310467295,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3113_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.222242907125369e-05,
+              "offset": 0.40067592958075693,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3113_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X3114_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf area (3114)",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3114_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf area (3114) (mean)",
+              "unit": "mm²",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.2492811011402075,
+              "offset": 8171.089190857844,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3114_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.7784278309917837e-05,
+              "offset": 0.5828496202229871,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3114_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X3117_mean_Shrub_Tree_Grass_1km",
+          "title": "SLA",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3117_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "SLA (mean)",
+              "unit": "m² kg⁻¹",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.0009152370316885738,
+              "offset": 32.47452846826606,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3117_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.992984976285062e-05,
+              "offset": 0.9809702172060497,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3117_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X3120_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf water content",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3120_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf water content (mean)",
+              "unit": "g g⁻¹",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.00018512370199583406,
+              "offset": 7.09248017590751,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3120_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.581368053005957e-05,
+              "offset": 0.8458563168314868,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X3120_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X351_mean_Shrub_Tree_Grass_1km",
+          "title": "Seed number (disp.)",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X351_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Seed number (disp.) (mean)",
+              "unit": "count",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.5232084358535458e-05,
+              "offset": 1.328030922850762,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X351_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.9464467835759e-05,
+              "offset": 0.6379186035774183,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X351_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X46_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf thickness",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X46_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf thickness (mean)",
+              "unit": "mm",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 7.253451236814202e-05,
+              "offset": 2.457466962308694,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X46_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.1035388510122813e-05,
+              "offset": 0.6894607415451901,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X46_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X47_mean_Shrub_Tree_Grass_1km",
+          "title": "LDMC",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X47_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "LDMC (mean)",
+              "unit": "g g⁻¹",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 6.515027280783577e-07,
+              "offset": 0.10721304458584058,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X47_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.4189925258880006e-05,
+              "offset": 0.7928955430397764,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X47_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X4_mean_Shrub_Tree_Grass_1km",
+          "title": "SSD",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X4_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "SSD (mean)",
+              "unit": "g cm⁻³",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.574890264284549e-05,
+              "offset": 0.4895061644621319,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X4_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.4534756199393765e-05,
+              "offset": 0.8041491962649161,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X4_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X50_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf N (area)",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X50_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf N (area) (mean)",
+              "unit": "g m⁻²",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 9.11367804449816e-05,
+              "offset": 3.2795194379550434,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X50_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.4700563609283993e-05,
+              "offset": 0.8095363352404092,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X50_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X55_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf dry mass",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X55_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf dry mass (mean)",
+              "unit": "g",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.06827945615982471,
+              "offset": 2238.0301319804507,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X55_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.552816062999087e-05,
+              "offset": 0.8365355472124065,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X55_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X614_mean_Shrub_Tree_Grass_1km",
+          "title": "SRL (fine)",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X614_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "SRL (fine) (mean)",
+              "unit": "cm g⁻¹",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.35755064171182804,
+              "offset": 11962.58389254363,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X614_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.233669988919313e-05,
+              "offset": 0.7320507836629986,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X614_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X6_mean_Shrub_Tree_Grass_1km",
+          "title": "Rooting depth",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X6_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "RRD (mean)",
+              "unit": "m",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.011319130457335565,
+              "offset": 370.9179537066602,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X6_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.4682291974397972e-05,
+              "offset": 0.481337306133355,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X6_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X78_mean_Shrub_Tree_Grass_1km",
+          "title": "Leaf delta 15N",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X78_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Leaf delta 15N (mean)",
+              "unit": "ppm",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.00026285272074600373,
+              "offset": 0.6271665067938716,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X78_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.363174723809738e-05,
+              "offset": 0.774520637896785,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X78_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        },
+        {
+          "id": "X95_mean_Shrub_Tree_Grass_1km",
+          "title": "Seed germination rate",
+          "datetime": "2026-01-30T00:00:00Z",
+          "bbox": [
+            -180.0,
+            -65.47703940221221,
+            180.0,
+            90.0
+          ],
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  180.0,
+                  -65.47703940221221
+                ],
+                [
+                  -180.0,
+                  -65.47703940221221
+                ]
+              ]
+            ]
+          },
+          "projection": {
+            "code": "EPSG:6933",
+            "bbox": [
+              -17367530.445161372,
+              -7342230.205017054,
+              17367530.445161372,
+              7342230.205017056
+            ],
+            "shape": [
+              14682,
+              34734
+            ],
+            "transform": [
+              1000.030543281014,
+              0.0,
+              -17367530.445161372,
+              0.0,
+              -1000.167580032292,
+              7342230.205017056
+            ]
+          },
+          "assets": {
+            "mean": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X95_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 1,
+              "bandName": "trait_mean",
+              "description": "Seed germination rate (mean)",
+              "unit": "days",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 0.0012726261628027888,
+              "offset": 81.3778418033661,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "cov": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X95_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 2,
+              "bandName": "coefficient_of_variation",
+              "description": "Coefficient of Variation",
+              "unit": "%",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 2.1000611607276192e-05,
+              "offset": 0.6882771256859996,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            },
+            "aoa": {
+              "assetKey": "data",
+              "href": "https://zenodo.org/records/14646322/files/X95_mean_Shrub_Tree_Grass_1km.tif",
+              "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+              "roles": [
+                "data"
+              ],
+              "band": 3,
+              "bandName": "area_of_applicability",
+              "description": "Area of Applicability mask",
+              "unit": "binary mask",
+              "dataType": "int16",
+              "nodata": -32768.0,
+              "scale": 1.0,
+              "offset": 0.0,
+              "overviews": [
+                2,
+                4,
+                8,
+                16,
+                32
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

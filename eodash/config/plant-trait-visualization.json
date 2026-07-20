@@ -1,0 +1,32 @@
+{
+  "collectionId": "global-plant-trait-maps",
+  "initialItemId": "X144_mean_Shrub_Tree_Grass_1km",
+  "assetProducts": {
+    "mean": {
+      "assetKey": "data",
+      "band": 1,
+      "bandName": "trait_mean"
+    },
+    "cov": {
+      "assetKey": "data",
+      "band": 2,
+      "bandName": "coefficient_of_variation"
+    },
+    "aoa": {
+      "assetKey": "data",
+      "band": 3,
+      "bandName": "area_of_applicability",
+      "insideValue": 0,
+      "outsideValue": 1
+    }
+  },
+  "styles": {
+    "mean": "../styles/plant-trait-mean.json",
+    "cov": "../styles/plant-trait-cov.json",
+    "aoa": "../styles/plant-trait-aoa.json"
+  },
+  "browserAccess": {
+    "zenodoApiContent": true,
+    "reason": "Zenodo record download URLs support ranges but omit CORS; API content URLs address the same published files and return CORS headers."
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "eo-plant-traits-dashboard",
+  "version": "1.0.0",
+  "description": "Static EO Dashboard viewer for global plant-trait COG assets",
+  "type": "module",
+  "scripts": {
+    "start": "eodash dev",
+    "dev": "eodash dev",
+    "build": "eodash build",
+    "preview": "eodash preview",
+    "lint": "eslint .",
+    "format": "prettier . --write"
+  },
+  "dependencies": {
+    "@eodash/eodash": "^5.0.0",
+    "@mdi/js": "^7.4.47",
+    "geotiff": "3.0.5",
+    "ol": "10.9.0",
+    "proj4": "2.20.9"
+  },
+  "author": "",
+  "devDependencies": {
+    "@eslint/js": "^8.57.1",
+    "eslint": "^8.57.1",
+    "eslint-plugin-vue": "^9.33.0",
+    "globals": "^13.24.0",
+    "prettier": "^3.9.5",
+    "typescript": "^5.8.3"
+  }
+}

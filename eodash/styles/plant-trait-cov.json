@@ -1,0 +1,8 @@
+{
+  "title": "Coefficient of variation",
+  "palette": ["#ffffff", "#2166ac", "#b2182b"],
+  "domain": [0.01, 0.065, 0.12],
+  "scale": "linear",
+  "unit": "fraction",
+  "opacity": 0.42
+}
