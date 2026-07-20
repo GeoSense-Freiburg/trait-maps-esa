@@ -1,3 +1,13 @@
+# Node
+eodash/viewer/node_modules/
+eodash/viewer/dist/
+eodash/viewer/.eodash/
+
+# Local logs
+*.log
+
+# STANDARD
+
 __pycache__/
 *.pyc
 .env
@@ -5,11 +15,11 @@ __pycache__/
 **/pycache/**
 *.sqlite
 *.gpkg
-# large data files
+# Large and local data files
 *.tif
 *.tiff
 *.hdf
-data/*
+data/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
