@@ -15,6 +15,7 @@ import {
   sampleMeanStyle,
 } from "./PlantTraitMapLayers";
 import { COV_CONTOUR_LEVELS, covColorForValue } from "./CovPalette";
+import { datasetInformationMarkup } from "./DatasetInformation";
 const tagName = "plant-trait-controls";
 const eyeOpen = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.2 12s3.6-6 9.8-6 9.8 6 9.8 6-3.6 6-9.8 6-9.8-6-9.8-6Z"/><circle cx="12" cy="12" r="3.1"/></svg>`;
 const eyeClosed = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3 21 21M10.6 6.1C11 6 11.5 6 12 6c6.2 0 9.8 6 9.8 6a16 16 0 0 1-3 3.6M14.6 17.7c-.8.2-1.7.3-2.6.3-6.2 0-9.8-6-9.8-6a17 17 0 0 1 4-4.4M9.8 9.8a3.1 3.1 0 0 0 4.4 4.4"/></svg>`;
@@ -112,6 +113,26 @@ if (!customElements.get(tagName)) {
         this.innerHTML = `
           <style>
             plant-trait-controls { display:block;box-sizing:border-box;height:100%;padding:14px 16px;color:#263238;font:14px/1.35 system-ui,sans-serif;overflow:auto }
+            .v-app-bar-title.header { font-weight:650;letter-spacing:.01em }
+            plant-trait-controls .visually-hidden { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0 }
+            plant-trait-controls .dataset-card { margin:0 0 14px;padding:11px 12px;border:1px solid #d6e0dc;border-radius:8px;background:rgba(248,250,249,.96);box-shadow:0 1px 3px rgba(20,40,45,.08) }
+            plant-trait-controls .dataset-card-head { display:flex;align-items:center;justify-content:space-between;gap:10px }
+            plant-trait-controls .dataset-card h2 { margin:0;color:#18343f;font-size:15px;font-weight:700;letter-spacing:.01em }
+            plant-trait-controls .dataset-card-body { margin-top:6px }
+            plant-trait-controls .dataset-card.is-collapsed .dataset-card-body { display:none }
+            plant-trait-controls .dataset-summary { margin:0 0 9px;color:#3e5058;font-size:11.5px;line-height:1.4 }
+            plant-trait-controls .dataset-metadata { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;margin:0 }
+            plant-trait-controls .dataset-metadata div { min-width:0 }
+            plant-trait-controls .dataset-metadata .metadata-wide { grid-column:1/-1 }
+            plant-trait-controls .dataset-metadata dt { color:#68777e;font-size:9.5px;font-weight:700;letter-spacing:.045em;text-transform:uppercase }
+            plant-trait-controls .dataset-metadata dd { margin:1px 0 0;color:#263238;font-size:11px;line-height:1.35;overflow-wrap:anywhere }
+            plant-trait-controls .dataset-metadata cite { font-style:normal }
+            plant-trait-controls .dataset-card a { color:#005f87;font-weight:650;text-decoration-thickness:1px;text-underline-offset:2px }
+            plant-trait-controls .dataset-card a:hover { color:#003f5c }
+            plant-trait-controls .dataset-card a:focus-visible { outline:2px solid #0878a8;outline-offset:2px;border-radius:2px }
+            plant-trait-controls .dataset-links { display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:9px;padding-top:8px;border-top:1px solid #dce4e1 }
+            plant-trait-controls .dataset-link { font-size:11px;white-space:nowrap }
+            @media (max-width:420px) { plant-trait-controls .dataset-metadata { grid-template-columns:1fr } plant-trait-controls .dataset-metadata .metadata-wide { grid-column:auto } }
             plant-trait-controls label { display:block;margin:0 0 5px;color:#52616b;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase }
             plant-trait-controls select { box-sizing:border-box;width:100%;margin-bottom:10px;padding:7px;border:1px solid #9eabb3;border-radius:4px;background:#fff }
             plant-trait-controls .panel-head { display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;color:#263238;font-size:13px;font-weight:700 }
@@ -151,6 +172,7 @@ if (!customElements.get(tagName)) {
             plant-trait-controls .status { min-height:16px;margin-top:6px;color:#52616b;font-size:11px }
             plant-trait-controls .source { margin-top:7px;color:#65747d;font-size:10px;overflow-wrap:anywhere }
           </style>
+          ${datasetInformationMarkup(this.canonical.collection)}
           <div class="panel-head"><span>Map controls</span><button id="collapse-controls" class="collapse" type="button" aria-expanded="true" aria-label="Minimize map controls" title="Minimize">−</button></div>
           <div class="control-body">
           <label for="trait-select">Plant trait</label>
@@ -190,6 +212,23 @@ if (!customElements.get(tagName)) {
           <div class="source">Canonical catalog: ${stacEndpoint}</div>
           </div>
         `;
+        this.querySelector("#collapse-dataset-information").addEventListener(
+          "click",
+          (event) => {
+            const card = event.currentTarget.closest(".dataset-card");
+            const collapsed = card.classList.toggle("is-collapsed");
+            event.currentTarget.textContent = collapsed ? "+" : "−";
+            event.currentTarget.setAttribute(
+              "aria-expanded",
+              String(!collapsed),
+            );
+            event.currentTarget.setAttribute(
+              "aria-label",
+              `${collapsed ? "Expand" : "Minimize"} dataset information`,
+            );
+            event.currentTarget.title = collapsed ? "Expand" : "Minimize";
+          },
+        );
         this.querySelector("#collapse-controls").addEventListener(
           "click",
           (event) => {

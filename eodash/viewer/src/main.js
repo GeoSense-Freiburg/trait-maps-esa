@@ -30,7 +30,7 @@ const application = createEodash({
   stacEndpoint,
   options: { useSubCode: false },
   brand: {
-    name: "EO Plant Traits Dashboard",
+    name: "Global Plant Trait Maps Explorer",
     logo: `${import.meta.env.BASE_URL}logo.png`,
     errorMessage: "The plant-trait viewer could not be initialized.",
     footerText: "Canonical STAC metadata · Zenodo raster assets",

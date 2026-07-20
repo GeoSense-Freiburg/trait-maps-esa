@@ -31,6 +31,21 @@ The map uses EPSG:6933, matching the scientific rasters. This avoids
 reprojecting raster pixels and the native AoA grid. The current reference map
 is the lightweight Natural Earth layer installed by `PlantTraitBasemap.js`.
 
+### Dataset header metadata
+
+The compact Dataset card is rendered by `DatasetInformation.js`. Its DOI,
+citation, publication URL, download URL, spatial extent, resolution, and trait
+count come from the canonical `stac_catalogs/stac_catalog_v1/collection.json`.
+The card deliberately does not duplicate these values in viewer code or a
+second configuration file.
+
+Update `sci:doi`, `sci:citation`, the `describedby` and `cite-as` links, the
+collection extent, and the collection description through the STAC publishing
+workflow. The viewer will then display the updated metadata without a UI code
+change. Additional fields such as version, update date, license, contact, or
+project URL can be added as STAC collection fields and exposed as another
+definition-list entry in `DatasetInformation.js`.
+
 ## STAC workflow
 
 `stac_catalogs/stac_catalog_v1/catalog.json` is the metadata authority. Its
