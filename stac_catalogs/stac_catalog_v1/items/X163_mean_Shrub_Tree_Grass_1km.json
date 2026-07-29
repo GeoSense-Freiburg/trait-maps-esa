@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "163",
-    "trait_short_name": "Leaf fresh mass",
+    "trait_short_name": "Leaf Fresh Mass",
     "trait_long_name": "Leaf fresh mass",
     "trait_unit": "g",
     "title": "Leaf fresh mass \u2014 Global 1 km Plant Trait Map",

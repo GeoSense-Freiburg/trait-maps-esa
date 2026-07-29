@@ -143,12 +143,19 @@ export const loadCanonicalPlantTraitIndex = async (visualization) => {
         ];
       }),
   );
-  const items = inventoryCollection.items.map((entry) => {
-    const canonicalItemUrl = itemLinks.get(entry.id);
-    if (!canonicalItemUrl)
-      throw new Error(`${entry.id}: canonical item link is missing`);
-    return { id: entry.id, title: entry.title ?? entry.id, canonicalItemUrl };
-  });
+  const unavailableItemIds = new Set(visualization.unavailableItemIds ?? []);
+  const items = inventoryCollection.items
+    .filter((entry) => !unavailableItemIds.has(entry.id))
+    .map((entry) => {
+      const canonicalItemUrl = itemLinks.get(entry.id);
+      if (!canonicalItemUrl)
+        throw new Error(`${entry.id}: canonical item link is missing`);
+      return {
+        id: entry.id,
+        title: entry.title ?? entry.id,
+        canonicalItemUrl,
+      };
+    });
   items.sort((left, right) => left.title.localeCompare(right.title));
   return { ...canonical, items };
 };

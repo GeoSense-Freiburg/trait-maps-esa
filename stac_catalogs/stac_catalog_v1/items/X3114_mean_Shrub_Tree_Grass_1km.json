@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "3114",
-    "trait_short_name": "Leaf area (3114)",
+    "trait_short_name": "Leaf Area (Unspecified)",
     "trait_long_name": "Leaf area (in case of compound leaves: undefined if leaf or leaflet, undefined if petiole is in- or excluded)",
     "trait_unit": "mm\u00b2",
     "title": "Leaf area (in case of compound leaves: undefined if leaf or leaflet, undefined if petiole is in- or excluded) \u2014 Global 1 km Plant Trait Map",

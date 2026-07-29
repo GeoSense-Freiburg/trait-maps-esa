@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "145",
-    "trait_short_name": "Leaf width",
+    "trait_short_name": "Leaf Width",
     "trait_long_name": "Leaf width",
     "trait_unit": "mm",
     "title": "Leaf width \u2014 Global 1 km Plant Trait Map",

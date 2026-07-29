@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "297",
-    "trait_short_name": "Wood ray density",
+    "trait_short_name": "Wood Ray Density",
     "trait_long_name": "Wood rays per millimetre (wood ray density)",
     "trait_unit": "mm\u207b\u00b9",
     "title": "Wood rays per millimetre (wood ray density) \u2014 Global 1 km Plant Trait Map",

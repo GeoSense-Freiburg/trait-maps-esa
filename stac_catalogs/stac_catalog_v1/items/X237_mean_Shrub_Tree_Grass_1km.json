@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "237",
-    "trait_short_name": "Dispersal unit length",
+    "trait_short_name": "Dispersal Unit Length",
     "trait_long_name": "Dispersal unit length",
     "trait_unit": "mm",
     "title": "Dispersal unit length \u2014 Global 1 km Plant Trait Map",

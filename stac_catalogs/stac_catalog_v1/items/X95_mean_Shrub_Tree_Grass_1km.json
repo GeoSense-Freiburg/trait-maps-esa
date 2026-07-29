@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "95",
-    "trait_short_name": "Seed germination rate",
+    "trait_short_name": "Seed Germination Rate",
     "trait_long_name": "Seed germination rate (germination efficiency)",
     "trait_unit": "days",
     "title": "Seed germination rate (germination efficiency) \u2014 Global 1 km Plant Trait Map",

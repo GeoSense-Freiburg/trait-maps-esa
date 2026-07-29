@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "282",
-    "trait_short_name": "Conduit element length",
+    "trait_short_name": "Conduit Element Length",
     "trait_long_name": "Wood vessel element length; stem conduit (vessel and tracheids) element length",
     "trait_unit": "\u03bcm",
     "title": "Wood vessel element length; stem conduit (vessel and tracheids) element length \u2014 Global 1 km Plant Trait Map",

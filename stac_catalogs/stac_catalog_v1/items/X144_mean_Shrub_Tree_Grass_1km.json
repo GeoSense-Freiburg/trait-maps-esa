@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "144",
-    "trait_short_name": "Leaf length",
+    "trait_short_name": "Leaf Length",
     "trait_long_name": "Leaf length",
     "trait_unit": "mm",
     "title": "Leaf length \u2014 Global 1 km Plant Trait Map",
@@ -150,7 +150,7 @@
           "description": "Coefficient of Variation",
           "data_type": "int16",
           "nodata": -32768.0,
-          "unit": "1",
+          "unit": "%",
           "sampling": "area",
           "scale": 2.247349756167821e-05,
           "offset": 0.7364941298837948,
@@ -164,7 +164,7 @@
         },
         {
           "name": "area_of_applicability",
-          "description": "Area of Applicability mask (0 = inside, 1 = outside)",
+          "description": "Area of Applicability mask",
           "data_type": "int16",
           "nodata": -32768.0,
           "unit": "binary mask",

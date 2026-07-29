@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "138",
-    "trait_short_name": "Seed number",
+    "trait_short_name": "Seed Number (Reproduction Unit)",
     "trait_long_name": "Seed number per reproduction unit",
     "trait_unit": "count",
     "title": "Seed number per reproduction unit \u2014 Global 1 km Plant Trait Map",

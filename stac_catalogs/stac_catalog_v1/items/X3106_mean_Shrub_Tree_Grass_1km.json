@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "3106",
-    "trait_short_name": "Plant height",
+    "trait_short_name": "Plant Height (Vegetative)",
     "trait_long_name": "Plant height vegetative",
     "trait_unit": "m",
     "title": "Plant height vegetative \u2014 Global 1 km Plant Trait Map",

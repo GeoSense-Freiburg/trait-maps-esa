@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "3117",
-    "trait_short_name": "SLA",
+    "trait_short_name": "Specific Leaf Area",
     "trait_long_name": "Leaf area per leaf dry mass (specific leaf area, SLA or 1/LMA): undefined if petiole is in- or excluded)",
     "trait_unit": "m\u00b2 kg\u207b\u00b9",
     "title": "Leaf area per leaf dry mass (specific leaf area, SLA or 1/LMA): undefined if petiole is in- or excluded) \u2014 Global 1 km Plant Trait Map",

@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "6",
-    "trait_short_name": "Rooting depth",
+    "trait_short_name": "Rooting Depth",
     "trait_long_name": "Root rooting depth",
     "trait_unit": "m",
     "title": "Root rooting depth \u2014 Global 1 km Plant Trait Map",

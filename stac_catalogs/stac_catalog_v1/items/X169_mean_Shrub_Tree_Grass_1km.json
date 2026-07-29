@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "169",
-    "trait_short_name": "Stem conduit density",
+    "trait_short_name": "Stem Conduit Density",
     "trait_long_name": "Stem conduit density (vessels and tracheids)",
     "trait_unit": "mm\u207b\u00b2",
     "title": "Stem conduit density (vessels and tracheids) \u2014 Global 1 km Plant Trait Map",

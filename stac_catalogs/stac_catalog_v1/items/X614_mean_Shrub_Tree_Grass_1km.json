@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "614",
-    "trait_short_name": "SRL (fine)",
+    "trait_short_name": "Specific Fine Root Length",
     "trait_long_name": "Fine root length per fine root dry mass (specific fine root length, SRL)",
     "trait_unit": "cm g\u207b\u00b9",
     "title": "Fine root length per fine root dry mass (specific fine root length, SRL) \u2014 Global 1 km Plant Trait Map",

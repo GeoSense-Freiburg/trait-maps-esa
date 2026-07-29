@@ -1,6 +1,7 @@
 {
   "collectionId": "global-plant-trait-maps",
   "initialItemId": "X144_mean_Shrub_Tree_Grass_1km",
+  "unavailableItemIds": ["X3112_mean_Shrub_Tree_Grass_1km"],
   "assetProducts": {
     "mean": {
       "assetKey": "data",

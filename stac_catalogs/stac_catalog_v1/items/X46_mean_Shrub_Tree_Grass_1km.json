@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "46",
-    "trait_short_name": "Leaf thickness",
+    "trait_short_name": "Leaf Thickness",
     "trait_long_name": "Leaf thickness",
     "trait_unit": "mm",
     "title": "Leaf thickness \u2014 Global 1 km Plant Trait Map",

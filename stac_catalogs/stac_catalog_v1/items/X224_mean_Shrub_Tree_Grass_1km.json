@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "224",
-    "trait_short_name": "Chromosome cDNA content",
+    "trait_short_name": "Chromosome cDNA Content",
     "trait_long_name": "Species genotype: chromosome cDNA content",
     "trait_unit": "Gb",
     "title": "Species genotype: chromosome cDNA content \u2014 Global 1 km Plant Trait Map",

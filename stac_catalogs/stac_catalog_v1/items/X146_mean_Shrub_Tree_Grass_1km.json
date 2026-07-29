@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "146",
-    "trait_short_name": "Leaf C/N ratio",
+    "trait_short_name": "Leaf C/N Ratio",
     "trait_long_name": "Leaf carbon/nitrogen (C/N) ratio",
     "trait_unit": "g g\u207b\u00b9",
     "title": "Leaf carbon/nitrogen (C/N) ratio \u2014 Global 1 km Plant Trait Map",

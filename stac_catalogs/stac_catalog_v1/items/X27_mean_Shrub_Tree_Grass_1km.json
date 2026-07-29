@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "27",
-    "trait_short_name": "Seed length",
+    "trait_short_name": "Seed Length",
     "trait_long_name": "Seed length",
     "trait_unit": "mm",
     "title": "Seed length \u2014 Global 1 km Plant Trait Map",

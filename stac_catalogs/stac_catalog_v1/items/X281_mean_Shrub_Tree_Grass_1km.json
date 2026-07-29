@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "281",
-    "trait_short_name": "Stem conduit diameter",
+    "trait_short_name": "Stem Conduit Diameter",
     "trait_long_name": "Stem conduit diameter (vessels, tracheids)",
     "trait_unit": "\u03bcm",
     "title": "Stem conduit diameter (vessels, tracheids) \u2014 Global 1 km Plant Trait Map",

@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "47",
-    "trait_short_name": "LDMC",
+    "trait_short_name": "Leaf Dry Matter Content",
     "trait_long_name": "Leaf dry mass per leaf fresh mass (leaf dry matter content, LDMC)",
     "trait_unit": "g g\u207b\u00b9",
     "title": "Leaf dry mass per leaf fresh mass (leaf dry matter content, LDMC) \u2014 Global 1 km Plant Trait Map",

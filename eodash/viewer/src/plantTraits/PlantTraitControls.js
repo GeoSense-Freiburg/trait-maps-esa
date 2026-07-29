@@ -135,6 +135,12 @@ if (!customElements.get(tagName)) {
             @media (max-width:420px) { plant-trait-controls .dataset-metadata { grid-template-columns:1fr } plant-trait-controls .dataset-metadata .metadata-wide { grid-column:auto } }
             plant-trait-controls label { display:block;margin:0 0 5px;color:#52616b;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase }
             plant-trait-controls select { box-sizing:border-box;width:100%;margin-bottom:10px;padding:7px;border:1px solid #9eabb3;border-radius:4px;background:#fff }
+            plant-trait-controls .trait-picker { display:grid;grid-template-columns:minmax(0,1fr) 22px;gap:6px;align-items:start }
+            plant-trait-controls .trait-help-wrap { position:relative;padding-top:5px }
+            plant-trait-controls .trait-help-button { display:inline-grid;place-items:center;width:18px;height:18px;padding:0;border:1px solid #80919a;border-radius:50%;background:#fff;color:#40545e;font:700 12px/1 system-ui;cursor:help }
+            plant-trait-controls .trait-help-button:focus-visible { outline:2px solid #0878a8;outline-offset:2px }
+            plant-trait-controls .trait-help-tooltip { position:absolute;z-index:30;top:27px;right:0;display:none;width:min(280px,70vw);padding:8px;border:1px solid #87979f;border-radius:5px;background:#fff;color:#263238;box-shadow:0 3px 10px rgba(20,28,32,.22);font-size:11px;line-height:1.4;text-transform:none;letter-spacing:0 }
+            plant-trait-controls .trait-help-wrap:hover .trait-help-tooltip, plant-trait-controls .trait-help-wrap:focus-within .trait-help-tooltip { display:block }
             plant-trait-controls .panel-head { display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;color:#263238;font-size:13px;font-weight:700 }
             plant-trait-controls .collapse { width:28px;height:28px;border:1px solid #aab7bd;border-radius:4px;background:#fff;color:#004170;font-size:20px;line-height:20px;cursor:pointer }
             plant-trait-controls.is-collapsed { height:auto;overflow:hidden }
@@ -176,9 +182,11 @@ if (!customElements.get(tagName)) {
           <div class="panel-head"><span>Map controls</span><button id="collapse-controls" class="collapse" type="button" aria-expanded="true" aria-label="Minimize map controls" title="Minimize">−</button></div>
           <div class="control-body">
           <label for="trait-select">Plant trait</label>
-          <select id="trait-select">${this.canonical.items
+          <div class="trait-picker"><select id="trait-select">${this.canonical.items
             .map((item) => `<option value="${item.id}">${item.title}</option>`)
-            .join("")}</select>
+            .join(
+              "",
+            )}</select><span class="trait-help-wrap"><button id="trait-help" class="trait-help-button" type="button" aria-describedby="trait-help-tooltip" aria-label="Full trait description">?</button><span id="trait-help-tooltip" class="trait-help-tooltip" role="tooltip"></span></span></div>
           <label for="basemap-select">Base map</label>
           <select id="basemap-select"><option value="natural-earth">Natural Earth reference</option></select>
           ${this.layerRow("mean", "Trait data", true, 1)}
@@ -562,6 +570,7 @@ if (!customElements.get(tagName)) {
           (candidate) => candidate.id === itemId,
         );
         if (!entry) return;
+        this.updateTraitHelp("Loading trait description…");
         const generation = Symbol(itemId);
         this.selectionGeneration = generation;
         const select = this.querySelector("#trait-select");
@@ -571,6 +580,11 @@ if (!customElements.get(tagName)) {
         try {
           const item = await loadCanonicalPlantTrait(entry, this.visualization);
           if (this.selectionGeneration !== generation) return;
+          this.updateTraitHelp(
+            item.properties?.trait_long_name ??
+              item.properties?.description ??
+              item.title,
+          );
           await this.useNativeRasterView(item);
           if (this.layers?.group) this.map.removeLayer(this.layers.group);
           if (this.pointerHandler)
@@ -624,6 +638,14 @@ if (!customElements.get(tagName)) {
         } finally {
           if (this.selectionGeneration === generation) select.disabled = false;
         }
+      }
+
+      updateTraitHelp(description) {
+        this.querySelector("#trait-help").setAttribute(
+          "aria-label",
+          `Full description: ${description}`,
+        );
+        this.querySelector("#trait-help-tooltip").textContent = description;
       }
 
       installHover(item) {

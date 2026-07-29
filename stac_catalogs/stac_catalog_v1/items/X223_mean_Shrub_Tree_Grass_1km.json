@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "223",
-    "trait_short_name": "Chromosome number",
+    "trait_short_name": "Chromosome Number",
     "trait_long_name": "Species genotype: chromosome number",
     "trait_unit": "count",
     "title": "Species genotype: chromosome number \u2014 Global 1 km Plant Trait Map",

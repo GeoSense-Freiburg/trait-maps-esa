@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "26",
-    "trait_short_name": "Seed mass",
+    "trait_short_name": "Seed Mass",
     "trait_long_name": "Seed dry mass",
     "trait_unit": "mg",
     "title": "Seed dry mass \u2014 Global 1 km Plant Trait Map",

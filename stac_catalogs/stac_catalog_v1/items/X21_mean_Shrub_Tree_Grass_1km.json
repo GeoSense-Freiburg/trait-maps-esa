@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "21",
-    "trait_short_name": "Stem diameter",
+    "trait_short_name": "Stem Diameter",
     "trait_long_name": "Stem diameter",
     "trait_unit": "m",
     "title": "Stem diameter \u2014 Global 1 km Plant Trait Map",

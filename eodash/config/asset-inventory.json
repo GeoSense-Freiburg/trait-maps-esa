@@ -8,7 +8,7 @@
       "items": [
         {
           "id": "X1080_mean_Shrub_Tree_Grass_1km",
-          "title": "SRL",
+          "title": "Specific Root Length",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -138,7 +138,7 @@
         },
         {
           "id": "X138_mean_Shrub_Tree_Grass_1km",
-          "title": "Seed number",
+          "title": "Seed Number (Reproduction Unit)",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -268,7 +268,7 @@
         },
         {
           "id": "X13_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf C",
+          "title": "Leaf Carbon Content",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -398,7 +398,7 @@
         },
         {
           "id": "X144_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf length",
+          "title": "Leaf Length",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -488,7 +488,7 @@
               "band": 2,
               "bandName": "coefficient_of_variation",
               "description": "Coefficient of Variation",
-              "unit": "1",
+              "unit": "%",
               "dataType": "int16",
               "nodata": -32768.0,
               "scale": 2.247349756167821e-05,
@@ -510,7 +510,7 @@
               ],
               "band": 3,
               "bandName": "area_of_applicability",
-              "description": "Area of Applicability mask (0 = inside, 1 = outside)",
+              "description": "Area of Applicability mask",
               "unit": "binary mask",
               "dataType": "int16",
               "nodata": -32768.0,
@@ -528,7 +528,7 @@
         },
         {
           "id": "X145_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf width",
+          "title": "Leaf Width",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -658,7 +658,7 @@
         },
         {
           "id": "X146_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf C/N ratio",
+          "title": "Leaf C/N Ratio",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -788,7 +788,7 @@
         },
         {
           "id": "X14_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf N (mass)",
+          "title": "Leaf Nitrogen Content (Mass)",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -918,7 +918,7 @@
         },
         {
           "id": "X15_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf P",
+          "title": "Leaf Phosphorus Content",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -1048,7 +1048,7 @@
         },
         {
           "id": "X163_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf fresh mass",
+          "title": "Leaf Fresh Mass",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -1178,7 +1178,7 @@
         },
         {
           "id": "X169_mean_Shrub_Tree_Grass_1km",
-          "title": "Stem conduit density",
+          "title": "Stem Conduit Density",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -1308,7 +1308,7 @@
         },
         {
           "id": "X21_mean_Shrub_Tree_Grass_1km",
-          "title": "Stem diameter",
+          "title": "Stem Diameter",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -1438,7 +1438,7 @@
         },
         {
           "id": "X223_mean_Shrub_Tree_Grass_1km",
-          "title": "Chromosome number",
+          "title": "Chromosome Number",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -1568,7 +1568,7 @@
         },
         {
           "id": "X224_mean_Shrub_Tree_Grass_1km",
-          "title": "Chromosome cDNA content",
+          "title": "Chromosome cDNA Content",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -1698,7 +1698,7 @@
         },
         {
           "id": "X237_mean_Shrub_Tree_Grass_1km",
-          "title": "Dispersal unit length",
+          "title": "Dispersal Unit Length",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -1828,7 +1828,7 @@
         },
         {
           "id": "X26_mean_Shrub_Tree_Grass_1km",
-          "title": "Seed mass",
+          "title": "Seed Mass",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -1958,7 +1958,7 @@
         },
         {
           "id": "X27_mean_Shrub_Tree_Grass_1km",
-          "title": "Seed length",
+          "title": "Seed Length",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -2088,7 +2088,7 @@
         },
         {
           "id": "X281_mean_Shrub_Tree_Grass_1km",
-          "title": "Stem conduit diameter",
+          "title": "Stem Conduit Diameter",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -2218,7 +2218,7 @@
         },
         {
           "id": "X282_mean_Shrub_Tree_Grass_1km",
-          "title": "Conduit element length",
+          "title": "Conduit Element Length",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -2348,7 +2348,7 @@
         },
         {
           "id": "X289_mean_Shrub_Tree_Grass_1km",
-          "title": "Wood fiber lengths",
+          "title": "Wood Fiber Lengths",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -2478,7 +2478,7 @@
         },
         {
           "id": "X297_mean_Shrub_Tree_Grass_1km",
-          "title": "Wood ray density",
+          "title": "Wood Ray Density",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -2608,7 +2608,7 @@
         },
         {
           "id": "X3106_mean_Shrub_Tree_Grass_1km",
-          "title": "Plant height",
+          "title": "Plant Height (Vegetative)",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -2738,7 +2738,7 @@
         },
         {
           "id": "X3107_mean_Shrub_Tree_Grass_1km",
-          "title": "Plant height (gen.)",
+          "title": "Plant Height (Generative)",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -2868,7 +2868,7 @@
         },
         {
           "id": "X3112_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf area (3112)",
+          "title": "Leaf Area (Leaf)",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -2998,7 +2998,7 @@
         },
         {
           "id": "X3113_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf area",
+          "title": "Leaf Area (Leaflet)",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -3128,7 +3128,7 @@
         },
         {
           "id": "X3114_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf area (3114)",
+          "title": "Leaf Area (Unspecified)",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -3258,7 +3258,7 @@
         },
         {
           "id": "X3117_mean_Shrub_Tree_Grass_1km",
-          "title": "SLA",
+          "title": "Specific Leaf Area",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -3388,7 +3388,7 @@
         },
         {
           "id": "X3120_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf water content",
+          "title": "Leaf Water Content",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -3518,7 +3518,7 @@
         },
         {
           "id": "X351_mean_Shrub_Tree_Grass_1km",
-          "title": "Seed number (disp.)",
+          "title": "Seed Number (Dispersal Unit)",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -3648,7 +3648,7 @@
         },
         {
           "id": "X46_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf thickness",
+          "title": "Leaf Thickness",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -3778,7 +3778,7 @@
         },
         {
           "id": "X47_mean_Shrub_Tree_Grass_1km",
-          "title": "LDMC",
+          "title": "Leaf Dry Matter Content",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -3908,7 +3908,7 @@
         },
         {
           "id": "X4_mean_Shrub_Tree_Grass_1km",
-          "title": "SSD",
+          "title": "Stem Specific Density",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -4038,7 +4038,7 @@
         },
         {
           "id": "X50_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf N (area)",
+          "title": "Leaf Nitrogen Content (Area)",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -4168,7 +4168,7 @@
         },
         {
           "id": "X55_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf dry mass",
+          "title": "Leaf Dry Mass",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -4298,7 +4298,7 @@
         },
         {
           "id": "X614_mean_Shrub_Tree_Grass_1km",
-          "title": "SRL (fine)",
+          "title": "Specific Fine Root Length",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -4428,7 +4428,7 @@
         },
         {
           "id": "X6_mean_Shrub_Tree_Grass_1km",
-          "title": "Rooting depth",
+          "title": "Rooting Depth",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -4558,7 +4558,7 @@
         },
         {
           "id": "X78_mean_Shrub_Tree_Grass_1km",
-          "title": "Leaf delta 15N",
+          "title": "Leaf Delta 15N",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,
@@ -4688,7 +4688,7 @@
         },
         {
           "id": "X95_mean_Shrub_Tree_Grass_1km",
-          "title": "Seed germination rate",
+          "title": "Seed Germination Rate",
           "datetime": "2026-01-30T00:00:00Z",
           "bbox": [
             -180.0,

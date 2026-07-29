@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "55",
-    "trait_short_name": "Leaf dry mass",
+    "trait_short_name": "Leaf Dry Mass",
     "trait_long_name": "Leaf dry mass (single leaf)",
     "trait_unit": "g",
     "title": "Leaf dry mass (single leaf) \u2014 Global 1 km Plant Trait Map",

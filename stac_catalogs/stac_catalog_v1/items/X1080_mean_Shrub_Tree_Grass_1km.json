@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "1080",
-    "trait_short_name": "SRL",
+    "trait_short_name": "Specific Root Length",
     "trait_long_name": "Root length per root dry mass (specific root length, SRL)",
     "trait_unit": "cm g\u207b\u00b9",
     "title": "Root length per root dry mass (specific root length, SRL) \u2014 Global 1 km Plant Trait Map",

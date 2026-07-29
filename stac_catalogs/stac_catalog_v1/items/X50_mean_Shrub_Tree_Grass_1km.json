@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "50",
-    "trait_short_name": "Leaf N (area)",
+    "trait_short_name": "Leaf Nitrogen Content (Area)",
     "trait_long_name": "Leaf nitrogen (N) content per leaf area",
     "trait_unit": "g m\u207b\u00b2",
     "title": "Leaf nitrogen (N) content per leaf area \u2014 Global 1 km Plant Trait Map",

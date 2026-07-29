@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "14",
-    "trait_short_name": "Leaf N (mass)",
+    "trait_short_name": "Leaf Nitrogen Content (Mass)",
     "trait_long_name": "Leaf nitrogen (N) content per leaf dry mass",
     "trait_unit": "mg g\u207b\u00b9",
     "title": "Leaf nitrogen (N) content per leaf dry mass \u2014 Global 1 km Plant Trait Map",

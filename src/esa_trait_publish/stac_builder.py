@@ -351,9 +351,7 @@ def _band_unit(band: dict, record: dict) -> str:
     if band_index == 1:
         return record.get("trait_unit") or "unitless"
     if band_index == 2:
-        # CoV is stored as the dimensionless std / mean ratio; callers may
-        # format it as a percentage for display without changing the data.
-        return "1"
+        return "%"
     if band_index == 3:
         return "binary mask"
     return "unitless"
@@ -363,12 +361,9 @@ def _build_raster_bands(rast_meta: dict, record: dict) -> list:
     bands = []
 
     for band in rast_meta.get("bands", []) or []:
-        description = band.get("description")
-        if band.get("band_index") == 3:
-            description = "Area of Applicability mask (0 = inside, 1 = outside)"
         entry = {
-            "name": _band_name(band.get("band_index"), description),
-            "description": description,
+            "name": _band_name(band.get("band_index"), band.get("description")),
+            "description": band.get("description"),
             "data_type": band.get("dtype"),
             "nodata": band.get("nodata"),
             "unit": _band_unit(band, record),

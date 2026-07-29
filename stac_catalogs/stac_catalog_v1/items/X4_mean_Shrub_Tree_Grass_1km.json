@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "4",
-    "trait_short_name": "SSD",
+    "trait_short_name": "Stem Specific Density",
     "trait_long_name": "Stem specific density (SSD) or wood density (stem dry mass per stem fresh volume)",
     "trait_unit": "g cm\u207b\u00b3",
     "title": "Stem specific density (SSD) or wood density (stem dry mass per stem fresh volume) \u2014 Global 1 km Plant Trait Map",

@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "78",
-    "trait_short_name": "Leaf delta 15N",
+    "trait_short_name": "Leaf Delta 15N",
     "trait_long_name": "Leaf nitrogen (N) isotope signature (delta 15N)",
     "trait_unit": "ppm",
     "title": "Leaf nitrogen (N) isotope signature (delta 15N) \u2014 Global 1 km Plant Trait Map",

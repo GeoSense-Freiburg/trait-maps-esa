@@ -42,7 +42,7 @@
   "properties": {
     "datetime": "2026-01-30T00:00:00Z",
     "trait_id": "3120",
-    "trait_short_name": "Leaf water content",
+    "trait_short_name": "Leaf Water Content",
     "trait_long_name": "Leaf water content per leaf dry mass (not saturated)",
     "trait_unit": "g g\u207b\u00b9",
     "title": "Leaf water content per leaf dry mass (not saturated) \u2014 Global 1 km Plant Trait Map",
