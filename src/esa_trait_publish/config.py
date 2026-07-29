@@ -5,7 +5,7 @@ collection-level metadata, a media type constant for COG/GeoTIFF assets, and
 a couple of convenience defaults used across the project.
 """
 
-from typing import Dict, List
+from typing import Dict
 
 
 COLLECTION_CONFIG: Dict[str, object] = {
@@ -22,32 +22,15 @@ COLLECTION_CONFIG: Dict[str, object] = {
 	"zenodo_doi_url": "https://doi.org/10.5281/zenodo.14646322",
 }
 
-# Full public catalog configuration (deploy-specific)
-GITHUB_PAGES_BASE_URL = (
-    "https://geosense-freiburg.github.io/trait-maps-esa"
-)
-FULL_STAC_CATALOG_URL = (
-    f"{GITHUB_PAGES_BASE_URL}/outputs/stac_catalog_v1_2/catalog.json"
-)
-
-# Directory where the lightweight EarthCODE/Open Science Catalog registry
-# collection JSON will be written when requested. Leave empty by default.
-EARTHCODE_REGISTRY_OUTPUT_DIR: str = (
-    "outputs/earthcode_registry"
-)
-
 # IDs and titles used for the top-level catalog
 CATALOG_ID: str = "global-plant-trait-maps-catalog"
-COLLECTION_ID: str = "global-plant-trait-maps"
 PRODUCT_TITLE: str = "Global Plant Functional Trait Maps at 1 km Resolution STAC Catalog"
 
 
 COG_MEDIA_TYPE: str = "image/tiff; application=geotiff; profile=cloud-optimized"
 
 
-DEFAULT_FILE_EXTENSIONS: List[str] = [".tif", ".tiff"]
-
-# Base href used to build hosted asset URLs for publication. TODO: change to PRR lateer when published
+# Base href for the published scientific assets.
 ASSET_BASE_HREF: str = "https://zenodo.org/records/14646322/files/"
 
 # Explicit Zenodo files base URL for the published dataset. Use this to
@@ -84,11 +67,12 @@ OSC_MISSIONS: list[str] = [
 	"in-situ-observations",
 ]
 
-# Publication DOI for describedby link
-PUBLICATION_DOI: str = "https://doi.org/10.1101/2025.03.10.641660"
+# Scientific publication for the describedby link
+PUBLICATION_DOI: str = "https://doi.org/10.1038/s41467-026-68996-y"
 
-# Documentation URL for via link
-DOCUMENTATION_URL: str = "https://planttraits.earth/"
+# External dataset landing page and interactive viewer
+ZENODO_RECORD_URL: str = "https://zenodo.org/records/14646322"
+VIEWER_URL: str = "https://geosense-freiburg.github.io/trait-maps-esa/"
 
 KEYWORDS = [
 	"Plant traits",
@@ -105,12 +89,6 @@ PROVIDERS = [
 	{"name": "Sensor-based Geoinformatics - University of Freiburg", "roles": ["producer", "processor"]},
 ]
 
-# Configurable root href for catalogs. Defaults to the collection.json at the
-# current directory. Can be updated later to point to a higher-level catalog
-# or deployment root (multi-resolution catalogs, PRR/APEx root, etc.).
-ROOT_HREF: str = "./collection.json"
-
-
 def get_collection_config() -> Dict[str, object]:
 	"""Return a shallow copy of the collection config.
 
@@ -118,4 +96,3 @@ def get_collection_config() -> Dict[str, object]:
 	small lists.
 	"""
 	return dict(COLLECTION_CONFIG)
-

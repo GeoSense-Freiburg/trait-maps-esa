@@ -55,6 +55,7 @@ export const datasetInformationMarkup = (collection) => {
   const doi = collection["sci:doi"] ?? "—";
   const citation = collection["sci:citation"] ?? "";
   const datasetUrl =
+    externalUrl(linkForRelation(collection, "via")) ??
     externalUrl(linkForRelation(collection, "cite-as")) ??
     (doi !== "—" ? externalUrl(`https://doi.org/${doi}`) : null);
   const publicationUrl = linkForRelation(collection, "describedby");

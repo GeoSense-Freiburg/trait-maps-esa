@@ -163,7 +163,7 @@ const covStyle = (band, style) => ({
       ["band", 2],
       ...style.domain.flatMap((value, index) => [
         rawValue(value, band),
-        rgba(style.palette[index]),
+        rgba(style.palette[index], style.alpha[index]),
       ]),
     ],
     [0, 0, 0, 0],

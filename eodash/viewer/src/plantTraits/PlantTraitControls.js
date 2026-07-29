@@ -490,10 +490,16 @@ if (!customElements.get(tagName)) {
           if (mode === "overlay") {
             content.innerHTML = `<div class="colorbar" id="cov-colorbar" role="img" aria-label="CoV colour scale"></div><div class="legend-ticks" id="cov-legend-ticks"></div>`;
             const style = this.visualization.resolvedStyles.cov;
+            const paletteWithAlpha = style.palette.map((color, index) => {
+              const alpha = Math.round(style.alpha[index] * 255)
+                .toString(16)
+                .padStart(2, "0");
+              return `${color}${alpha}`;
+            });
             this.updateColorbar(
               this.querySelector("#cov-colorbar"),
               this.querySelector("#cov-legend-ticks"),
-              style.palette,
+              paletteWithAlpha,
               style.domain,
               (value) =>
                 style.unit === "fraction"

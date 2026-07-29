@@ -150,7 +150,7 @@
           "description": "Coefficient of Variation",
           "data_type": "int16",
           "nodata": -32768.0,
-          "unit": "%",
+          "unit": "1",
           "sampling": "area",
           "scale": 2.247349756167821e-05,
           "offset": 0.7364941298837948,
@@ -164,7 +164,7 @@
         },
         {
           "name": "area_of_applicability",
-          "description": "Area of Applicability mask",
+          "description": "Area of Applicability mask (0 = inside, 1 = outside)",
           "data_type": "int16",
           "nodata": -32768.0,
           "unit": "binary mask",

@@ -32,7 +32,8 @@ from .config import (
     PROVIDERS,
     OSC_MISSIONS,
     PUBLICATION_DOI,
-    DOCUMENTATION_URL,
+    ZENODO_RECORD_URL,
+    VIEWER_URL,
 )
 
 from .filename_parser import parse_filename
@@ -350,7 +351,9 @@ def _band_unit(band: dict, record: dict) -> str:
     if band_index == 1:
         return record.get("trait_unit") or "unitless"
     if band_index == 2:
-        return "%"
+        # CoV is stored as the dimensionless std / mean ratio; callers may
+        # format it as a percentage for display without changing the data.
+        return "1"
     if band_index == 3:
         return "binary mask"
     return "unitless"
@@ -360,9 +363,12 @@ def _build_raster_bands(rast_meta: dict, record: dict) -> list:
     bands = []
 
     for band in rast_meta.get("bands", []) or []:
+        description = band.get("description")
+        if band.get("band_index") == 3:
+            description = "Area of Applicability mask (0 = inside, 1 = outside)"
         entry = {
-            "name": _band_name(band.get("band_index"), band.get("description")),
-            "description": band.get("description"),
+            "name": _band_name(band.get("band_index"), description),
+            "description": description,
             "data_type": band.get("dtype"),
             "nodata": band.get("nodata"),
             "unit": _band_unit(band, record),
@@ -443,7 +449,7 @@ def _collection_reference_links() -> List[pystac.Link]:
             "describedby",
             PUBLICATION_DOI,
             media_type="text/html",
-            title="Associated Publication",
+            title="Scientific publication",
         ),
         pystac.Link(
             "cite-as",
@@ -453,9 +459,15 @@ def _collection_reference_links() -> List[pystac.Link]:
         ),
         pystac.Link(
             "via",
-            DOCUMENTATION_URL,
+            ZENODO_RECORD_URL,
             media_type="text/html",
-            title="Dataset Documentation",
+            title="Dataset on Zenodo",
+        ),
+        pystac.Link(
+            "about",
+            VIEWER_URL,
+            media_type="text/html",
+            title="Interactive viewer",
         ),
     ]
 

@@ -23,9 +23,9 @@
     },
     {
       "rel": "describedby",
-      "href": "https://doi.org/10.1101/2025.03.10.641660",
+      "href": "https://doi.org/10.1038/s41467-026-68996-y",
       "type": "text/html",
-      "title": "Associated Publication"
+      "title": "Scientific publication"
     },
     {
       "rel": "cite-as",
@@ -35,9 +35,15 @@
     },
     {
       "rel": "via",
-      "href": "https://planttraits.earth/",
+      "href": "https://zenodo.org/records/14646322",
       "type": "text/html",
-      "title": "Dataset Documentation"
+      "title": "Dataset on Zenodo"
+    },
+    {
+      "rel": "about",
+      "href": "https://geosense-freiburg.github.io/trait-maps-esa/",
+      "type": "text/html",
+      "title": "Interactive viewer"
     },
     {
       "rel": "item",
