@@ -81,7 +81,7 @@ export const assetVersionFor = (item, product) => {
 export const stableDerivedKey = (kind, fields) =>
   JSON.stringify({ kind, ...fields });
 
-const getDerivedCacheSnapshot = () => {
+export const getDerivedCacheSnapshot = () => {
   const totals = emptyCounters();
   const byKey = Object.fromEntries(
     [...countersByKey].map(([key, value]) => {

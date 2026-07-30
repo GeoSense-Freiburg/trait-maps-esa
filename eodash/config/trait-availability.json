@@ -1,0 +1,338 @@
+{
+  "sourceItems": "stac_catalogs/stac_catalog_v1/items",
+  "items": [
+    {
+      "id": "X223_mean_Shrub_Tree_Grass_1km",
+      "title": "Chromosome Number",
+      "assetKey": "data",
+      "filename": "X223_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X223_mean_Shrub_Tree_Grass_1km.tif",
+      "available": false,
+      "httpStatus": 404
+    },
+    {
+      "id": "X224_mean_Shrub_Tree_Grass_1km",
+      "title": "Chromosome cDNA Content",
+      "assetKey": "data",
+      "filename": "X224_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X224_mean_Shrub_Tree_Grass_1km.tif",
+      "available": false,
+      "httpStatus": 404
+    },
+    {
+      "id": "X282_mean_Shrub_Tree_Grass_1km",
+      "title": "Conduit Element Length",
+      "assetKey": "data",
+      "filename": "X282_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X282_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X237_mean_Shrub_Tree_Grass_1km",
+      "title": "Dispersal Unit Length",
+      "assetKey": "data",
+      "filename": "X237_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X237_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X3112_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Area (Leaf)",
+      "assetKey": "data",
+      "filename": "X3112_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X3112_mean_Shrub_Tree_Grass_1km.tif",
+      "available": false,
+      "httpStatus": 404
+    },
+    {
+      "id": "X3113_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Area (Leaflet)",
+      "assetKey": "data",
+      "filename": "X3113_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X3113_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X3114_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Area (Unspecified)",
+      "assetKey": "data",
+      "filename": "X3114_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X3114_mean_Shrub_Tree_Grass_1km.tif",
+      "available": false,
+      "httpStatus": 404
+    },
+    {
+      "id": "X146_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf C/N Ratio",
+      "assetKey": "data",
+      "filename": "X146_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X146_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X13_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Carbon Content",
+      "assetKey": "data",
+      "filename": "X13_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X13_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X78_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Delta 15N",
+      "assetKey": "data",
+      "filename": "X78_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X78_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X55_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Dry Mass",
+      "assetKey": "data",
+      "filename": "X55_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X55_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X47_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Dry Matter Content",
+      "assetKey": "data",
+      "filename": "X47_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X47_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X163_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Fresh Mass",
+      "assetKey": "data",
+      "filename": "X163_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X163_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X144_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Length",
+      "assetKey": "data",
+      "filename": "X144_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X144_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X50_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Nitrogen Content (Area)",
+      "assetKey": "data",
+      "filename": "X50_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X50_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X14_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Nitrogen Content (Mass)",
+      "assetKey": "data",
+      "filename": "X14_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X14_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X15_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Phosphorus Content",
+      "assetKey": "data",
+      "filename": "X15_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X15_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X46_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Thickness",
+      "assetKey": "data",
+      "filename": "X46_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X46_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X3120_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Water Content",
+      "assetKey": "data",
+      "filename": "X3120_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X3120_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X145_mean_Shrub_Tree_Grass_1km",
+      "title": "Leaf Width",
+      "assetKey": "data",
+      "filename": "X145_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X145_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X3107_mean_Shrub_Tree_Grass_1km",
+      "title": "Plant Height (Generative)",
+      "assetKey": "data",
+      "filename": "X3107_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X3107_mean_Shrub_Tree_Grass_1km.tif",
+      "available": false,
+      "httpStatus": 404
+    },
+    {
+      "id": "X3106_mean_Shrub_Tree_Grass_1km",
+      "title": "Plant Height (Vegetative)",
+      "assetKey": "data",
+      "filename": "X3106_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X3106_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X6_mean_Shrub_Tree_Grass_1km",
+      "title": "Rooting Depth",
+      "assetKey": "data",
+      "filename": "X6_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X6_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X95_mean_Shrub_Tree_Grass_1km",
+      "title": "Seed Germination Rate",
+      "assetKey": "data",
+      "filename": "X95_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X95_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X27_mean_Shrub_Tree_Grass_1km",
+      "title": "Seed Length",
+      "assetKey": "data",
+      "filename": "X27_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X27_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X26_mean_Shrub_Tree_Grass_1km",
+      "title": "Seed Mass",
+      "assetKey": "data",
+      "filename": "X26_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X26_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X351_mean_Shrub_Tree_Grass_1km",
+      "title": "Seed Number (Dispersal Unit)",
+      "assetKey": "data",
+      "filename": "X351_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X351_mean_Shrub_Tree_Grass_1km.tif",
+      "available": false,
+      "httpStatus": 404
+    },
+    {
+      "id": "X138_mean_Shrub_Tree_Grass_1km",
+      "title": "Seed Number (Reproduction Unit)",
+      "assetKey": "data",
+      "filename": "X138_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X138_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X614_mean_Shrub_Tree_Grass_1km",
+      "title": "Specific Fine Root Length",
+      "assetKey": "data",
+      "filename": "X614_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X614_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X3117_mean_Shrub_Tree_Grass_1km",
+      "title": "Specific Leaf Area",
+      "assetKey": "data",
+      "filename": "X3117_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X3117_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X1080_mean_Shrub_Tree_Grass_1km",
+      "title": "Specific Root Length",
+      "assetKey": "data",
+      "filename": "X1080_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X1080_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X169_mean_Shrub_Tree_Grass_1km",
+      "title": "Stem Conduit Density",
+      "assetKey": "data",
+      "filename": "X169_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X169_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X281_mean_Shrub_Tree_Grass_1km",
+      "title": "Stem Conduit Diameter",
+      "assetKey": "data",
+      "filename": "X281_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X281_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X21_mean_Shrub_Tree_Grass_1km",
+      "title": "Stem Diameter",
+      "assetKey": "data",
+      "filename": "X21_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X21_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X4_mean_Shrub_Tree_Grass_1km",
+      "title": "Stem Specific Density",
+      "assetKey": "data",
+      "filename": "X4_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X4_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X289_mean_Shrub_Tree_Grass_1km",
+      "title": "Wood Fiber Lengths",
+      "assetKey": "data",
+      "filename": "X289_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X289_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    },
+    {
+      "id": "X297_mean_Shrub_Tree_Grass_1km",
+      "title": "Wood Ray Density",
+      "assetKey": "data",
+      "filename": "X297_mean_Shrub_Tree_Grass_1km.tif",
+      "href": "https://zenodo.org/records/14646322/files/X297_mean_Shrub_Tree_Grass_1km.tif",
+      "available": true,
+      "httpStatus": 200
+    }
+  ]
+}

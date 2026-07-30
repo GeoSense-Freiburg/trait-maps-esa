@@ -8,14 +8,23 @@ import { installNaturalEarthBasemap } from "./PlantTraitBasemap";
 import { getCenter } from "ol/extent.js";
 import { transform } from "ol/proj.js";
 import {
+  activatePlantTraitLayerGroup,
+  cancelPlantTraitPreload,
+  clearPlantTraitCache,
+  configurePlantTraitCache,
   createPlantTraitLayerGroup,
+  discardPlantTraitLayerGroup,
   fitItem,
   formatMeanStops,
+  getOutstandingTraitRequests,
+  preloadPlantTraitOverview,
   readPlantTraitValuesAtPixel,
   sampleMeanStyle,
+  waitForFirstVisibleRaster,
 } from "./PlantTraitMapLayers";
 import { COV_CONTOUR_LEVELS, covColorForValue } from "./CovPalette";
 import { datasetInformationMarkup } from "./DatasetInformation";
+import { getTraitStatus } from "./TraitStatus";
 const tagName = "plant-trait-controls";
 const eyeOpen = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.2 12s3.6-6 9.8-6 9.8 6 9.8 6-3.6 6-9.8 6-9.8-6-9.8-6Z"/><circle cx="12" cy="12" r="3.1"/></svg>`;
 const eyeClosed = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3 21 21M10.6 6.1C11 6 11.5 6 12 6c6.2 0 9.8 6 9.8 6a16 16 0 0 1-3 3.6M14.6 17.7c-.8.2-1.7.3-2.6.3-6.2 0-9.8-6-9.8-6a17 17 0 0 1 4-4.4M9.8 9.8a3.1 3.1 0 0 0 4.4 4.4"/></svg>`;
@@ -64,6 +73,9 @@ if (!customElements.get(tagName)) {
         this.innerHTML = `<p style="padding:16px;font:14px system-ui">Loading trait index…</p>`;
         try {
           this.visualization = await loadVisualizationConfig();
+          configurePlantTraitCache(
+            this.visualization.inactiveTraitCacheSize ?? 4,
+          );
           this.canonical = await loadCanonicalPlantTraitIndex(
             this.visualization,
           );
@@ -71,6 +83,8 @@ if (!customElements.get(tagName)) {
           await this.configureScientificProjection();
           await this.installBasemaps();
           this.renderControls();
+          this.preloadInterruptHandler = () => this.cancelTraitPreloading();
+          this.map.on("movestart", this.preloadInterruptHandler);
           const searchParams = new URL(window.location.href).searchParams;
           const requested = searchParams.get("trait");
           const hasRequestedView = ["x", "y", "z"].every((name) =>
@@ -82,6 +96,12 @@ if (!customElements.get(tagName)) {
               (item) => item.id === this.visualization.initialItemId,
             ) ??
             this.canonical.items[0];
+          if (!initial) {
+            this.querySelector("#trait-select").disabled = true;
+            this.querySelector("#layer-status").textContent =
+              "No currently available trait rasters were detected.";
+            return;
+          }
           await this.selectTrait(initial.id, !hasRequestedView);
         } catch (error) {
           console.error(
@@ -93,8 +113,12 @@ if (!customElements.get(tagName)) {
       }
 
       disconnectedCallback() {
+        this.cancelSelectionLoad();
+        this.cancelTraitPreloading();
         if (this.pointerHandler && this.map)
           this.map.un("pointermove", this.pointerHandler);
+        if (this.preloadInterruptHandler && this.map)
+          this.map.un("movestart", this.preloadInterruptHandler);
         if (this.hoverLeaveHandler && this.map) {
           this.map
             .getViewport()
@@ -102,6 +126,7 @@ if (!customElements.get(tagName)) {
         }
         if (this.layers?.group && this.map)
           this.map.removeLayer(this.layers.group);
+        clearPlantTraitCache();
         if (this.hoverFrame) window.cancelAnimationFrame(this.hoverFrame);
         document.removeEventListener("pointerdown", this.helpOutsideHandler);
         document.removeEventListener("keydown", this.helpKeyHandler);
@@ -135,6 +160,10 @@ if (!customElements.get(tagName)) {
             @media (max-width:420px) { plant-trait-controls .dataset-metadata { grid-template-columns:1fr } plant-trait-controls .dataset-metadata .metadata-wide { grid-column:auto } }
             plant-trait-controls label { display:block;margin:0 0 5px;color:#52616b;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase }
             plant-trait-controls select { box-sizing:border-box;width:100%;margin-bottom:10px;padding:7px;border:1px solid #9eabb3;border-radius:4px;background:#fff }
+            plant-trait-controls .selected-trait-information { display:flex;flex-wrap:wrap;align-items:center;gap:5px 8px;margin:0 0 6px;min-height:20px }
+            plant-trait-controls .selected-trait-title { color:#263238;font-size:13px;font-weight:700 }
+            plant-trait-controls .trait-status-badge { display:inline-block;padding:1px 7px;border:1px solid #84939a;border-radius:999px;background:#f1f4f3;color:#263238;font-size:10px;font-weight:750;line-height:1.45 }
+            plant-trait-controls .trait-status-badge[data-status="experimental"] { border-color:#a7670d;background:#fff0d2;color:#633b05 }
             plant-trait-controls .trait-picker { display:grid;grid-template-columns:minmax(0,1fr) 22px;gap:6px;align-items:start }
             plant-trait-controls .trait-help-wrap { position:relative;padding-top:5px }
             plant-trait-controls .trait-help-button { display:inline-grid;place-items:center;width:18px;height:18px;padding:0;border:1px solid #80919a;border-radius:50%;background:#fff;color:#40545e;font:700 12px/1 system-ui;cursor:help }
@@ -182,6 +211,7 @@ if (!customElements.get(tagName)) {
           <div class="panel-head"><span>Map controls</span><button id="collapse-controls" class="collapse" type="button" aria-expanded="true" aria-label="Minimize map controls" title="Minimize">−</button></div>
           <div class="control-body">
           <label for="trait-select">Plant trait</label>
+          <div class="selected-trait-information" aria-live="polite"><span id="selected-trait-title" class="selected-trait-title"></span><span id="trait-status" class="trait-status-badge" data-status="unknown">Unknown</span></div>
           <div class="trait-picker"><select id="trait-select">${this.canonical.items
             .map((item) => `<option value="${item.id}">${item.title}</option>`)
             .join(
@@ -538,6 +568,7 @@ if (!customElements.get(tagName)) {
           layers.covContours.get("contoursLoading")
         )
           return;
+        this.cancelTraitPreloading();
         layers.covContours.set("contoursLoading", true);
         const status = this.querySelector("#layer-status");
         status.textContent = "Loading the 16× COG overview for CoV contours…";
@@ -565,14 +596,137 @@ if (!customElements.get(tagName)) {
         }
       }
 
+      removeHoverHandler() {
+        if (this.pointerHandler)
+          this.map.un("pointermove", this.pointerHandler);
+        if (this.hoverLeaveHandler) {
+          this.map
+            .getViewport()
+            .removeEventListener("pointerleave", this.hoverLeaveHandler);
+        }
+        this.pointerHandler = null;
+        this.hoverLeaveHandler = null;
+      }
+
+      cancelSelectionLoad() {
+        const task = this.selectionTask;
+        if (!task) return;
+        task.controller.abort();
+        if (task.layers) {
+          this.map?.removeLayer(task.layers.group);
+          this.removeHoverHandler();
+          discardPlantTraitLayerGroup(task.layers);
+          if (this.layers === task.layers) this.layers = null;
+        }
+        this.selectionTask = null;
+      }
+
+      cancelTraitPreloading() {
+        this.preloadGeneration = null;
+        if (this.preloadIdleHandle !== undefined) {
+          if (this.preloadIdleIsNative)
+            window.cancelIdleCallback(this.preloadIdleHandle);
+          else window.clearTimeout(this.preloadIdleHandle);
+        }
+        if (this.preloadRetryTimer !== undefined)
+          window.clearTimeout(this.preloadRetryTimer);
+        this.preloadIdleHandle = undefined;
+        this.preloadRetryTimer = undefined;
+        cancelPlantTraitPreload();
+      }
+
+      scheduleNeighbourPreloads(itemId) {
+        this.cancelTraitPreloading();
+        const selectedIndex = this.canonical.items.findIndex(
+          (entry) => entry.id === itemId,
+        );
+        if (selectedIndex < 0) return;
+        const queue = [selectedIndex - 1, selectedIndex + 1]
+          .filter((index) => index >= 0 && index < this.canonical.items.length)
+          .map((index) => this.canonical.items[index]);
+        const generation = Symbol(`preload-${itemId}`);
+        this.preloadGeneration = generation;
+
+        const scheduleNext = () => {
+          if (
+            this.preloadGeneration !== generation ||
+            queue.length === 0 ||
+            this.item?.id !== itemId
+          )
+            return;
+          const run = async (deadline) => {
+            this.preloadIdleHandle = undefined;
+            if (
+              this.preloadGeneration !== generation ||
+              this.selectionTask ||
+              this.layers?.covContours.get("contoursLoading") ||
+              getOutstandingTraitRequests() > 0
+            ) {
+              this.preloadRetryTimer = window.setTimeout(scheduleNext, 250);
+              return;
+            }
+            if (deadline && deadline.timeRemaining() < 5) {
+              scheduleNext();
+              return;
+            }
+            const entry = queue.shift();
+            try {
+              const item = await loadCanonicalPlantTrait(
+                entry,
+                this.visualization,
+              );
+              if (
+                this.preloadGeneration !== generation ||
+                this.selectionTask ||
+                this.item?.id !== itemId
+              )
+                return;
+              await preloadPlantTraitOverview(item);
+            } catch (error) {
+              if (error.name === "AbortError") {
+                this.preloadGeneration = null;
+                return;
+              }
+              if (import.meta.env.DEV)
+                console.debug(
+                  `[plant-traits] best-effort preload failed for ${entry.id}`,
+                  error,
+                );
+            }
+            scheduleNext();
+          };
+          if ("requestIdleCallback" in window) {
+            this.preloadIdleIsNative = true;
+            this.preloadIdleHandle = window.requestIdleCallback(run);
+          } else {
+            this.preloadIdleIsNative = false;
+            this.preloadIdleHandle = window.setTimeout(
+              () => run({ timeRemaining: () => 50 }),
+              250,
+            );
+          }
+        };
+        scheduleNext();
+      }
+
       async selectTrait(itemId, fit) {
         const entry = this.canonical.items.find(
           (candidate) => candidate.id === itemId,
         );
         if (!entry) return;
+        this.updateSelectedTraitInformation(entry);
+        this.cancelTraitPreloading();
+        this.cancelSelectionLoad();
         this.updateTraitHelp("Loading trait description…");
         const generation = Symbol(itemId);
         this.selectionGeneration = generation;
+        const selectionStartedAt = performance.now();
+        const task = {
+          generation,
+          controller: new AbortController(),
+          layers: null,
+        };
+        this.selectionTask = task;
         const select = this.querySelector("#trait-select");
         const status = this.querySelector("#layer-status");
         select.disabled = true;
@@ -585,21 +739,19 @@ if (!customElements.get(tagName)) {
               item.properties?.description ??
               item.title,
           );
-          await this.useNativeRasterView(item);
+          this.updateSelectedTraitInformation(item);
           if (this.layers?.group) this.map.removeLayer(this.layers.group);
-          if (this.pointerHandler)
-            this.map.un("pointermove", this.pointerHandler);
-          if (this.hoverLeaveHandler) {
-            this.map
-              .getViewport()
-              .removeEventListener("pointerleave", this.hoverLeaveHandler);
-          }
+          this.removeHoverHandler();
+          await this.useNativeRasterView(item);
+          if (this.selectionGeneration !== generation) return;
           this.item = item;
           this.layers = createPlantTraitLayerGroup(
             item,
             this.visualization,
             this.map.getView().getProjection().getCode(),
           );
+          task.layers = this.layers;
+          activatePlantTraitLayerGroup(this.layers, selectionStartedAt);
           this.styleGeneration = generation;
           this.map.addLayer(this.layers.group);
           select.value = item.id;
@@ -618,6 +770,7 @@ if (!customElements.get(tagName)) {
           // Contour creation is intentionally detached from trait selection;
           // the map and controls remain interactive while the overview loads.
           void this.applyCovMode();
+          status.textContent = "Loading first visible raster…";
           this.updateTraitLegend(item, formatMeanStops(item));
           this.updateLegends();
           this.installHover(item);
@@ -625,16 +778,31 @@ if (!customElements.get(tagName)) {
           url.searchParams.set("trait", item.id);
           window.history.replaceState(null, "", url);
           if (fit) fitItem(this.map, item);
+          this.updateSampledMeanStyle(item, generation, 0);
+          await waitForFirstVisibleRaster(this.layers, task.controller.signal);
+          if (this.selectionGeneration !== generation) return;
+          this.selectionTask = null;
           if (
             this.querySelector("#cov-visible").dataset.visible !== "true" ||
             this.querySelector("#cov-mode").value !== "contours"
           ) {
             status.textContent = "";
           }
-          this.updateSampledMeanStyle(item, generation, 0);
+          this.scheduleNeighbourPreloads(item.id);
         } catch (error) {
+          if (
+            error.name === "AbortError" ||
+            this.selectionGeneration !== generation
+          )
+            return;
           console.error(`Failed to load ${itemId}`, error);
           status.textContent = `Trait loading failed: ${error.message}`;
+          if (task.layers) {
+            this.map.removeLayer(task.layers.group);
+            discardPlantTraitLayerGroup(task.layers);
+            if (this.layers === task.layers) this.layers = null;
+          }
+          this.selectionTask = null;
         } finally {
           if (this.selectionGeneration === generation) select.disabled = false;
         }
@@ -646,6 +814,19 @@ if (!customElements.get(tagName)) {
           `Full description: ${description}`,
         );
         this.querySelector("#trait-help-tooltip").textContent = description;
+      }
+
+      updateSelectedTraitInformation(item) {
+        const status = getTraitStatus(item);
+        this.querySelector("#selected-trait-title").textContent =
+          item.title ?? item.id;
+        const badge = this.querySelector("#trait-status");
+        badge.textContent = status.label;
+        badge.dataset.status = status.isExperimental
+          ? "experimental"
+          : status.normalized
+            ? "specified"
+            : "unknown";
       }
 
       installHover(item) {

@@ -110,14 +110,14 @@ const loadCatalogCollection = async (visualization) => {
 };
 
 /**
- * Build the selector from the generated inventory, then fetch canonical item
- * JSON only when a trait is selected. The inventory is an automatically
- * checked index of the canonical catalog, not a second metadata authority.
+ * Build the selector from every canonical STAC item whose primary raster was
+ * confirmed by the build-time availability preprocessing step.
  */
 export const loadCanonicalPlantTraitIndex = async (visualization) => {
-  const [canonical, inventory] = await Promise.all([
+  const [canonical, inventory, availability] = await Promise.all([
     loadCatalogCollection(visualization),
     fetchJson(repositoryUrl("eodash/config/asset-inventory.json")),
+    fetchJson(repositoryUrl("eodash/config/trait-availability.json")),
   ]);
   const inventoryCollection = inventory.collections?.find(
     (candidate) => candidate.id === visualization.collectionId,
@@ -127,6 +127,9 @@ export const loadCanonicalPlantTraitIndex = async (visualization) => {
       `Collection ${visualization.collectionId} missing from asset inventory`,
     );
   }
+  const availabilityById = new Map(
+    availability.items?.map((entry) => [entry.id, entry]) ?? [],
+  );
   const itemLinks = new Map(
     (canonical.collection.links ?? [])
       .filter((link) => link.rel === "item")
@@ -143,9 +146,14 @@ export const loadCanonicalPlantTraitIndex = async (visualization) => {
         ];
       }),
   );
-  const unavailableItemIds = new Set(visualization.unavailableItemIds ?? []);
   const items = inventoryCollection.items
-    .filter((entry) => !unavailableItemIds.has(entry.id))
+    .filter((entry) => {
+      const checked = availabilityById.get(entry.id);
+      return (
+        checked?.available === true &&
+        checked.href === entry.assets?.mean?.href
+      );
+    })
     .map((entry) => {
       const canonicalItemUrl = itemLinks.get(entry.id);
       if (!canonicalItemUrl)
