@@ -36,8 +36,10 @@ const application = createEodash({
     footerText: "Canonical STAC metadata · Zenodo raster assets",
     theme: {
       colors: {
-        primary: "#004170",
-        secondary: "#004170",
+        primary: "#fff",
+        secondary: "#fff",
+        "on-primary": "#004170",
+        "on-secondary": "#004170",
         background: "#fff",
         surface: "#fff",
       },
